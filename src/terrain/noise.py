@@ -1,4 +1,5 @@
-from random import seed, randint, shuffle
+import random
+
 from math import floor, ceil
 
 
@@ -16,7 +17,7 @@ class PerlinNoise:
     p = [None] * 512
 
     def __init__(self) -> None:
-        seed(10)
+        random.seed(10)
         self.set_permutation_table()
 
     def __call__(self, x, y=0, z=0) -> int:
@@ -52,7 +53,7 @@ class PerlinNoise:
         p = PerlinNoise.p
 
         permutation_table = [i for i in range(256)]
-        shuffle(permutation_table)
+        random.shuffle(permutation_table)
 
         for j in range(256):
             p[256 + j] = p[j] = permutation_table[j]
@@ -116,6 +117,7 @@ class PerlinNoise:
         y - the passed y coordinate value, its default value is set to y = 0.
         z - the passed z coordinate value, its default value is set to z = 0.
         """
+
         p = PerlinNoise.p
 
         X = floor(x) & 255

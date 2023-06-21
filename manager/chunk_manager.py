@@ -1,0 +1,13 @@
+class ChunkManager:
+
+    def __init__(self):
+        ...
+
+    def generate_chunk(self):
+        ...
+
+    def load_chunk(self):
+        ...
+
+    def unload_chunk(self):
+        ...
