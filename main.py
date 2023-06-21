@@ -19,7 +19,10 @@ def main(event_manager: EventManager, screen: pygame.Surface, clock: pygame.time
 
 if __name__ == "__main__":
     from src.constants import (
-        WINDOW_DISPLAY_WIDTH, WINDOW_DISPLAY_HEIGHT, BLACK, FRAME_RATE)
+        WINDOW_DISPLAY_WIDTH,
+        WINDOW_DISPLAY_HEIGHT,
+        BLACK,
+        FRAME_RATE)
 
     pygame.init()
 

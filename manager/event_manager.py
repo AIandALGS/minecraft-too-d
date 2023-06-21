@@ -3,7 +3,7 @@ import pygame
 
 class EventManager:
 
-    def __init__(self):
+    def __init__(self) -> None:
         ...
 
     def poll_events(self) -> bool:
