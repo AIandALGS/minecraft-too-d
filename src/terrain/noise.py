@@ -16,8 +16,8 @@ class PerlinNoise:
 
     p = [None] * 512
 
-    def __init__(self) -> None:
-        random.seed(10)
+    def __init__(self, seed=0) -> None:
+        random.seed(seed)
         self.set_permutation_table()
 
     def __call__(self, x, y=0, z=0) -> int:
