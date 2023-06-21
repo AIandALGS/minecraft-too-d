@@ -6,7 +6,7 @@ from manager.music_manager import MusicManager
 class EventManager:
 
     def __init__(self) -> None:
-        self.__music_manager = MusicManager
+        self.__music_manager = MusicManager()
 
     def poll_events(self) -> bool:
         game_running = True

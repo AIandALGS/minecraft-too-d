@@ -5,24 +5,34 @@ from os import listdir
 
 
 class MusicManager:
+    """
+    The MusicManager class manages events related to music.
 
-    def __init__(self):
-        self.music_path = "sound_fx"
+    Attributes:
+    __music_path - a private variable which stores the path to our
+    source of music.
+    __music_list - a private variable which stores the list of all
+    music in the music directory.
+    __music_poll - a private variable which stores the number of 
+    music in the music directory.
+    """
 
-        self.music_list = listdir(self.music_path)
-        self.music_poll = len(self.music_list) - 1
+    def __init__(self) -> None:
+        self.__music_path = "sound_fx"
 
-    def play_music(self):
-        music_rand = randint(0, self.music_poll)
+        self.__music_list = listdir(self.__music_path)
+        self.__music_poll = len(self.__music_list) - 1
 
-        music_live = self.music_path + "/" + self.music_list[music_rand]
+    def play_music(self) -> None:
+        """
+        Plays a random music from the music directory.
+        """
+
+        music_rand = randint(0, self.__music_poll)
+
+        music_live = self.__music_path + "/" + self.__music_list[music_rand]
 
         mixer.music.load(music_live)
         mixer.music.play()
 
-        print("Now playing: " + ''.join(self.music_list[music_rand]))
-
-
-music_manager = MusicManager()
-
-music_manager.play_music()
+        print("Now playing: " + ''.join(self.__music_list[music_rand]))
