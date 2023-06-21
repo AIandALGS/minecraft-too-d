@@ -10,6 +10,11 @@ class PerlinNoise:
     one dimensional terrains, two dimensional terrains and three dimensional
     terrains.
 
+    Author: https://rosettacode.org/wiki/Perlin_noise#Python
+
+    Keywords:
+    seed - the seed to be used for the Perlin noise generator.
+
     Function calls:
     set_permutation_table() - sets the permutation table.
     """
@@ -18,6 +23,7 @@ class PerlinNoise:
 
     def __init__(self, seed=0) -> None:
         random.seed(seed)
+
         self.set_permutation_table()
 
     def __call__(self, x, y=0, z=0) -> int:
