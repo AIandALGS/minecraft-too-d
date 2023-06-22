@@ -16,10 +16,12 @@ class World:
         self.__screen = screen
         self.__player = Player()
 
+        self.__chunk_manager = ChunkManager(self.__seed)
+
     def generate_world(self):
         player_local_position = self.__player.get_player_local_position()
 
-        ...
+        self.__chunk_manager.initialize_chunks((0, 0))
 
     def display():
         player = Player()

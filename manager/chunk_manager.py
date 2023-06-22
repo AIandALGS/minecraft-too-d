@@ -5,6 +5,8 @@ from typing import Tuple
 from src.terrain.noise import PerlinNoise
 from src.block.block_type import BlockType
 
+from src.utils.rounding import round_to_nearest_multiple
+
 from src.constants import (
     BLOCK_SIZE,
     CHUNK_SIZE
@@ -13,34 +15,77 @@ from src.constants import (
 
 class ChunkManager:
 
-    def __init__(self):
+    def __init__(self, seed=0):
+        self.__perlin_noise = PerlinNoise(seed)
+
         self.__chunk_data = dict()
 
         self.__loaded_chunks = []
 
-    def initialize_chunks(self):
-        for chunk_y in range(-CHUNK_SIZE, 2 * CHUNK_SIZE, CHUNK_SIZE):
-            block_data = dict()
+    def initialize_chunks(self, chunk_position: Tuple[int, int] = (0, 0)):
+        """ 
+        Initializes the starting chunks upon world generation.
 
-            for chunk_x in range(-CHUNK_SIZE, 2 * CHUNK_SIZE, CHUNK_SIZE):
+        Keywords:
+        chunk_position - the starting chunk position by default will be at 
+        (x, y) cooridnates, (0, 0).
+        """
+
+        for chunk_x in range(-CHUNK_SIZE, 2 * CHUNK_SIZE, CHUNK_SIZE):
+            for chunk_y in range(-CHUNK_SIZE, 2 * CHUNK_SIZE, CHUNK_SIZE):
                 chunk_position = (chunk_x, chunk_y)
 
-                block_data = self.generate_chunk(chunk_position)
+                self.generate_empty_chunk(chunk_position)
+                self.generate_chunk(chunk_position)
 
-    def generate_chunk(self, chunk_position: Tuple[int, int]) -> None:
+    def generate_empty_chunk(self, chunk_position: Tuple[int, int]) -> None:
+        """
+        Generates an empty chunk when called. This function will 
+        mainly be called to preallocate memory for new chunk data.
+        """
+
         block_data = dict()
 
         chunk_x = chunk_position[0]
         chunk_y = chunk_position[1]
 
-        # Generate the Perlin height map first
-        for block_y in range(chunk_y, CHUNK_SIZE + abs(chunk_y)):
-            for block_x in range(chunk_x, CHUNK_SIZE + abs(chunk_x)):
+        for block_x in range(chunk_x, CHUNK_SIZE + chunk_x):
+            for block_y in range(chunk_y, CHUNK_SIZE + chunk_y):
                 block_position = (block_x, block_y)
+                block_data[block_position] = BlockType.AIR
 
-                block_data[block_position] = BlockType.AIR.value
+        self.__chunk_data[chunk_position] = block_data
 
-        return block_data
+    def generate_chunk(self, chunk_position: Tuple[int, int]) -> None:
+        chunk_x = chunk_position[0]
+        chunk_y = chunk_position[1]
+
+        for block_x in range(chunk_x, CHUNK_SIZE + abs(chunk_x)):
+            block_y = self.__perlin_noise(block_x)
+            block_position = (block_x, block_y)
+
+            self.insert_block(chunk_position, block_position, BlockType.GRASS)
+
+    def insert_block(self, chunk_position, block_position, block_type):
+        chunk_x, chunk_y = chunk_position
+        block_x, block_y = block_position
+
+        if block_y >= chunk_y + CHUNK_SIZE or block_y < chunk_y:
+            new_chunk_x = chunk_x
+            new_chunk_y = round_to_nearest_multiple(block_y, CHUNK_SIZE)
+
+            new_chunk_position = (new_chunk_x, new_chunk_y)
+
+            if new_chunk_position not in self.__chunk_data:
+                self.generate_empty_chunk(new_chunk_position)
+
+            self.set_block(new_chunk_position, block_position, block_type)
+
+        else:
+            self.set_block(chunk_position, block_position, block_type)
+
+    def set_block(self, chunk_position, block_position, block_type):
+        self.__chunk_data[chunk_position].update({block_position: block_type})
 
     def update_chunk(self):
         ...

@@ -1,6 +1,6 @@
 from strenum import StrEnum
 
-from block_type import BlockType
+from src.block.block_type import BlockType
 
 import pygame
 
