@@ -40,8 +40,8 @@ class PerlinNoise:
         z - the passed z coordinate value, its default value is set to z = 0.
         """
 
-        frequency = 5
-        amplitude = 20
+        frequency = 0.25
+        amplitude = 5
 
         step = 0.05
 

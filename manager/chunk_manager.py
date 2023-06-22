@@ -22,7 +22,7 @@ class ChunkManager:
 
         self.__loaded_chunks = []
 
-    def initialize_chunks(self, chunk_position: Tuple[int, int] = (0, 0)):
+    def initialize_chunks(self, chunk_position: Tuple[int, int] = (0, 0)) -> None:
         """ 
         Initializes the starting chunks upon world generation.
 
@@ -37,6 +37,8 @@ class ChunkManager:
 
                 self.generate_empty_chunk(chunk_position)
                 self.generate_chunk(chunk_position)
+
+                self.__loaded_chunks.append(chunk_position)
 
     def generate_empty_chunk(self, chunk_position: Tuple[int, int]) -> None:
         """
@@ -108,5 +110,7 @@ class ChunkManager:
     def unload_chunk(self):
         ...
 
-    def display_chunks(self):
-        ...
+    def display(self, screen):
+        for chunk_position in self.__loaded_chunks:
+            block_data = self.__chunk_data[chunk_position]
+            BlockManager.display(screen, block_data)

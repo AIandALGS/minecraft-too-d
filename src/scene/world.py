@@ -10,10 +10,9 @@ from random import randint
 
 class World:
 
-    def __init__(self, screen):
-        self.__seed = randint(0, sys.maxint)
+    def __init__(self):
+        self.__seed = randint(0, sys.maxsize)
 
-        self.__screen = screen
         self.__player = Player()
 
         self.__chunk_manager = ChunkManager(self.__seed)
@@ -23,5 +22,5 @@ class World:
 
         self.__chunk_manager.initialize_chunks((0, 0))
 
-    def display():
-        player = Player()
+    def display(self, screen):
+        self.__chunk_manager.display(screen)

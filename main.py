@@ -4,6 +4,8 @@ import pygame
 
 from manager.event_manager import EventManager
 
+from src.scene.world import World
+
 
 def main(event_manager: EventManager, screen: pygame.Surface, clock: pygame.time.Clock) -> None:
     game_running = True
@@ -12,6 +14,7 @@ def main(event_manager: EventManager, screen: pygame.Surface, clock: pygame.time
         screen.fill(BLACK)
 
         game_running = event_manager.poll_events()
+        world.display(screen)
 
         pygame.display.update()
         clock.tick(FRAME_RATE)
@@ -30,6 +33,9 @@ if __name__ == "__main__":
         (WINDOW_DISPLAY_WIDTH, WINDOW_DISPLAY_HEIGHT))
 
     event_manager = EventManager()
+
+    world = World()
+    world.generate_world()
 
     main(event_manager, screen, pygame.time.Clock())
 
