@@ -7,8 +7,8 @@ class BlockType(IntEnum):
     to all block types.
     """
 
-    AIR = -1
-    WATER = 0
-    GRASS = 1
-    DIRT = 2
-    STONE = 3
+    AIR: int = -1
+    WATER: int = 0
+    GRASS: int = 1
+    DIRT: int = 2
+    STONE: int = 3
