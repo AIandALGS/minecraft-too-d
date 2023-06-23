@@ -10,7 +10,6 @@ from random import randint
 
 
 class World:
-
     seed = randint(0, sys.maxsize)
 
     def __init__(self, player: Player, camera: Camera):

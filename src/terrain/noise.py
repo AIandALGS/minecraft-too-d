@@ -5,7 +5,7 @@ from math import floor, ceil
 
 class PerlinNoise:
     """
-    Perlin noise is a type of gradient noise developed by Ken Perlin in 1983. 
+    Perlin noise is a type of gradient noise developed by Ken Perlin in 1983.
     In our case, we will be using Perlin noise to generate heightmaps for
     one dimensional terrains, two dimensional terrains and three dimensional
     terrains.
@@ -28,7 +28,7 @@ class PerlinNoise:
 
     def __call__(self, x, y=0, z=0) -> int:
         """
-        Upon calling the PerlinNoise class, generate a noise value for the 
+        Upon calling the PerlinNoise class, generate a noise value for the
         passed x, y and z coordinate values.
 
         Return the generated noise value for the passed x, y ad z coordinate
@@ -74,7 +74,7 @@ class PerlinNoise:
         t - a function variable for f(t).
         """
 
-        return t ** 3 * (t * (t * 6 - 15) + 10)
+        return t**3 * (t * (t * 6 - 15) + 10)
 
     def get_linear_interpolation(self, t, a, b) -> float:
         """
@@ -112,10 +112,10 @@ class PerlinNoise:
 
     def generate_noise(self, x, y=0, z=0) -> float:
         """
-        Generate a noise value based on the passed x, y and z coordinate 
+        Generate a noise value based on the passed x, y and z coordinate
         values.
 
-        Return a noise value based on the passed x, y and z coordinate 
+        Return a noise value based on the passed x, y and z coordinate
         values.
 
         Keywords:
@@ -148,11 +148,32 @@ class PerlinNoise:
         BA = p[B] + Z
         BB = p[B + 1] + Z
 
-        return self.get_linear_interpolation(w, self.get_linear_interpolation(v, self.get_linear_interpolation(u, self.get_gradient(p[AA], x, y, z),
-                                                                                                               self.get_gradient(p[BA], x-1, y, z)),
-                                                                              self.get_linear_interpolation(u, self.get_gradient(p[AB], x, y-1, z),
-                                                                                                            self.get_gradient(p[BB], x-1, y-1, z))),
-                                             self.get_linear_interpolation(v, self.get_linear_interpolation(u, self.get_gradient(p[AA+1], x, y, z-1),
-                                                                           self.get_gradient(p[BA+1], x-1, y, z-1)),
-                                                                           self.get_linear_interpolation(u, self.get_gradient(p[AB+1], x, y-1, z-1),
-                                                                                                         self.get_gradient(p[BB+1], x-1, y-1, z-1))))
+        return self.get_linear_interpolation(
+            w,
+            self.get_linear_interpolation(
+                v,
+                self.get_linear_interpolation(
+                    u,
+                    self.get_gradient(p[AA], x, y, z),
+                    self.get_gradient(p[BA], x - 1, y, z),
+                ),
+                self.get_linear_interpolation(
+                    u,
+                    self.get_gradient(p[AB], x, y - 1, z),
+                    self.get_gradient(p[BB], x - 1, y - 1, z),
+                ),
+            ),
+            self.get_linear_interpolation(
+                v,
+                self.get_linear_interpolation(
+                    u,
+                    self.get_gradient(p[AA + 1], x, y, z - 1),
+                    self.get_gradient(p[BA + 1], x - 1, y, z - 1),
+                ),
+                self.get_linear_interpolation(
+                    u,
+                    self.get_gradient(p[AB + 1], x, y - 1, z - 1),
+                    self.get_gradient(p[BB + 1], x - 1, y - 1, z - 1),
+                ),
+            ),
+        )

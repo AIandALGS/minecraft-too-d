@@ -5,13 +5,10 @@ from src.block.block_path import BlockPath
 
 from typing import Tuple
 
-from src.constants import (
-    BLOCK_SIZE
-)
+from src.constants import BLOCK_SIZE
 
 
 class BlockManager:
-
     @staticmethod
     def create_block(block_position, block_type, camera_offset=0):
         block_path = BlockPath[block_type.name].value
@@ -47,7 +44,10 @@ class BlockManager:
         for block_position, block_type in block_data.items():
             if block_type.value >= 0:
                 block_texture, block_rect = BlockManager.create_block(
-                    block_position, block_type)
+                    block_position, block_type
+                )
 
-                screen.blit(block_texture, (block_rect.x -
-                            camera_offset.x, block_rect.y - camera_offset.y))
+                offset_x = block_rect.x - camera_offset.x
+                offset_y = block_rect.y - camera_offset.y
+
+                screen.blit(block_texture, (offset_x, offset_y))

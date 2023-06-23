@@ -8,7 +8,7 @@ class Position(pygame.math.Vector2):
 
     Keywords:
     x - the passed x coordinate component
-    y - the passed y coordinate 
+    y - the passed y coordinate
     """
 
     def __init__(self, x: int, y: int):

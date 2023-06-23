@@ -4,7 +4,6 @@ from manager.music_manager import MusicManager
 
 
 class EventManager:
-
     def __init__(self) -> None:
         self.__music_manager = MusicManager()
 

@@ -9,12 +9,11 @@ from src.constants import (
     PLAYER_HEIGHT,
     PLAYER_X_VELOCITY,
     PLAYER_Y_VELOCITY,
-    BLOCK_SIZE
+    BLOCK_SIZE,
 )
 
 
 class Player(pygame.sprite.Sprite):
-
     def __init__(self) -> None:
         self.__sprites = dict()
 
@@ -30,8 +29,7 @@ class Player(pygame.sprite.Sprite):
         player_path = "data/textures/entities/player/steve.png"
 
         player_imge = pygame.image.load(player_path).convert_alpha()
-        player_txtr = pygame.transform.scale(
-            player_imge, (PLAYER_WIDTH, PLAYER_HEIGHT))
+        player_txtr = pygame.transform.scale(player_imge, (PLAYER_WIDTH, PLAYER_HEIGHT))
 
         return player_txtr
 
@@ -57,11 +55,10 @@ class Player(pygame.sprite.Sprite):
             self.move_right()
 
     def display(self, screen: pygame.Surface, camera_offset: Position):
+        offset_x = self.__rect.x - camera_offset.x
+        offset_y = self.__rect.y - camera_offset.y
 
-        print(self.__rect.x, self.__rect.y)
-
-        screen.blit(self.__txtr, (self.__rect.x - camera_offset.x,
-                    self.__rect.y - camera_offset.y))
+        screen.blit(self.__txtr, (offset_x, offset_y))
 
     # def get_player_local_x(self) -> int:
     #     """

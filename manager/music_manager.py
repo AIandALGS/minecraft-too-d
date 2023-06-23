@@ -13,7 +13,7 @@ class MusicManager:
     source of music.
     __music_list - a private variable which stores the list of all
     music in the music directory.
-    __music_poll - a private variable which stores the number of 
+    __music_poll - a private variable which stores the number of
     music in the music directory.
     """
 
@@ -35,4 +35,4 @@ class MusicManager:
         mixer.music.load(music_live)
         mixer.music.play()
 
-        print("Now playing: " + ''.join(self.__music_list[music_rand]))
+        print("Now playing: " + "".join(self.__music_list[music_rand]))

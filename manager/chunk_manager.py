@@ -8,14 +8,10 @@ from src.utils.rounding import round_to_nearest_multiple
 
 from typing import Tuple
 
-from src.constants import (
-    BLOCK_SIZE,
-    CHUNK_SIZE
-)
+from src.constants import BLOCK_SIZE, CHUNK_SIZE
 
 
 class ChunkManager:
-
     def __init__(self, seed=0):
         self.__perlin_noise = PerlinNoise(seed)
 
@@ -24,11 +20,11 @@ class ChunkManager:
         self.__loaded_chunks = []
 
     def initialize_chunks(self, chunk_position: Tuple[int, int] = (0, 0)) -> None:
-        """ 
+        """
         Initializes the starting chunks upon world generation.
 
         Keywords:
-        chunk_position - the starting chunk position by default will be at 
+        chunk_position - the starting chunk position by default will be at
         (x, y) cooridnates, (0, 0).
         """
 
@@ -43,7 +39,7 @@ class ChunkManager:
 
     def generate_empty_chunk(self, chunk_position: Tuple[int, int]) -> None:
         """
-        Generates an empty chunk when called. This function will 
+        Generates an empty chunk when called. This function will
         mainly be called to preallocate memory for new chunk data.
         """
 
@@ -96,7 +92,7 @@ class ChunkManager:
     def load_chunk(self, player_local_position: Tuple[int, int]) -> None:
         """
         Loads the current chunks based on the player's local x and
-        y coordinate values. 
+        y coordinate values.
 
         Keywords:
         player_x - the player's local x coordinate value.
