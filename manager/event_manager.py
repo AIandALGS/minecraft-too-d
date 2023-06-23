@@ -5,14 +5,12 @@ from manager.music_manager import MusicManager
 
 class EventManager:
     """
-    The event manager class keeps tracks of all pygame 
-    events. 
+    The event manager class keeps tracks of all pygame events.
 
-    TODO: Add a priority queue for higher priority 
-    vectors.
+    TODO: Add a priority queue for higher priority vectors.
 
     Attributes:
-    __music_manager - a private variable defined to 
+    __music_manager - a private variable defined to
     """
 
     def __init__(self) -> None:
@@ -20,11 +18,10 @@ class EventManager:
 
     def poll_events(self) -> bool:
         """
-        Poll game events, i.e. check if the game is still
-        running.
+        Poll game events, i.e. check if the game is still running.
 
-        Return a Boolean values based on whether the game is 
-        running or not.
+        Return a Boolean values based on whether the game is running or
+        not.
         """
 
         game_running = True

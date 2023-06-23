@@ -3,26 +3,18 @@ import pygame
 from src.block.block_type import BlockType
 from src.block.block_path import BlockPath
 
-from typing import Tuple
+from typing import List, Tuple
 
 from src.constants import BLOCK_SIZE
 
 
 class BlockManager:
-    @staticmethod
-    def create_block(block_position, block_type, camera_offset=0):
-        block_path = BlockPath[block_type.name].value
 
-        block_imge = pygame.image.load(block_path).convert_alpha()
-        block_txtr = pygame.transform.scale(
-            block_imge, (BLOCK_SIZE, BLOCK_SIZE))
+    def __init__(self):
+        self.__rects = []
+        self.__txtrs = []
 
-        block_rect = BlockManager.get_block_rect(block_position, camera_offset)
-
-        return block_txtr, block_rect
-
-    @staticmethod
-    def get_block_rect(block_position, camera_offset=0):
+    def get_block_rect(self, block_position) -> pygame.Rect:
         global_block_x = block_position[0] * BLOCK_SIZE
         global_block_y = block_position[1] * BLOCK_SIZE
 
@@ -35,19 +27,42 @@ class BlockManager:
 
         return block_rect
 
+    def get_block_txtr(self, block_type):
+        block_path = BlockPath[block_type.name].value
+
+        block_imge = pygame.image.load(block_path).convert_alpha()
+        block_txtr = pygame.transform.scale(
+            block_imge, (BLOCK_SIZE, BLOCK_SIZE))
+
+        return block_txtr
+
+    def get_block_rect_list(self) -> List[pygame.Rect]:
+        return self.__rects
+
+    def update(self, block_data):
+        self.__rects.clear()
+        self.__txtrs.clear()
+
+        for block_position, block_type in block_data.items():
+
+            if block_type != BlockType.AIR:
+
+                block_rect = self.get_block_rect(block_position)
+                block_txtr = self.get_block_txtr(block_type)
+
+                self.__rects.append(block_rect)
+                self.__txtrs.append(block_txtr)
+
+        print(len(self.__rects), len(self.__txtrs))
+
     @staticmethod
     def remove_block(chunk_pos, block_pos):
         ...
 
-    @staticmethod
-    def display(screen, block_data, camera_offset):
-        for block_position, block_type in block_data.items():
-            if block_type.value >= 0:
-                block_texture, block_rect = BlockManager.create_block(
-                    block_position, block_type
-                )
+    def display(self, screen, camera_offset):
+        for block_rect, block_txtr in zip(self.__rects, self.__txtrs):
 
-                offset_x = block_rect.x - camera_offset.x
-                offset_y = block_rect.y - camera_offset.y
+            offset_x = block_rect.x - camera_offset.x
+            offset_y = block_rect.y - camera_offset.y
 
-                screen.blit(block_texture, (offset_x, offset_y))
+            screen.blit(block_txtr, (offset_x, offset_y))

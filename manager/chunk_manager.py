@@ -13,11 +13,12 @@ from src.constants import BLOCK_SIZE, CHUNK_SIZE
 
 class ChunkManager:
     def __init__(self, seed=0):
-        self.__perlin_noise = PerlinNoise(seed)
+        self.__block_manager = BlockManager()
 
         self.__chunk_data = dict()
-
         self.__loaded_chunks = []
+
+        self.__perlin_noise = PerlinNoise(seed)
 
     def initialize_chunks(self, chunk_position: Tuple[int, int] = (0, 0)) -> None:
         """
@@ -86,7 +87,7 @@ class ChunkManager:
     def set_block(self, chunk_position, block_position, block_type):
         self.__chunk_data[chunk_position].update({block_position: block_type})
 
-    def update_chunk(self):
+    def update_chunk_data():
         ...
 
     def load_chunk(self, player_local_position: Tuple[int, int]) -> None:
@@ -110,4 +111,6 @@ class ChunkManager:
     def display(self, screen, camera_offset: Position):
         for chunk_position in self.__loaded_chunks:
             block_data = self.__chunk_data[chunk_position]
-            BlockManager.display(screen, block_data, camera_offset)
+
+            self.__block_manager.update(block_data)
+            self.__block_manager.display(screen, camera_offset)
