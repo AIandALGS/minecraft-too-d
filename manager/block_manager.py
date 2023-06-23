@@ -12,41 +12,42 @@ from src.constants import (
 
 class BlockManager:
 
-    def __init__(self):
-        ...
-
     @staticmethod
-    def get_block_texture(block_type):
+    def create_block(block_position, block_type, camera_offset=0):
         block_path = BlockPath[block_type.name].value
 
         block_imge = pygame.image.load(block_path).convert_alpha()
         block_txtr = pygame.transform.scale(
             block_imge, (BLOCK_SIZE, BLOCK_SIZE))
 
-        return block_txtr
+        block_rect = BlockManager.get_block_rect(block_position, camera_offset)
+
+        return block_txtr, block_rect
 
     @staticmethod
-    def create_block(chunk_pos: Tuple[int, int], block_pos: Tuple[int, int], block_type: BlockType):
-        block_rect = pygame.Rect(*block_pos, BLOCK_SIZE, BLOCK_SIZE)
-        block_rect.rect.center = block_pos
+    def get_block_rect(block_position, camera_offset=0):
+        global_block_x = block_position[0] * BLOCK_SIZE
+        global_block_y = block_position[1] * BLOCK_SIZE
+
+        global_block_position = (global_block_x, global_block_y)
+
+        block_rect = pygame.Rect(
+            *global_block_position, BLOCK_SIZE, BLOCK_SIZE)
+
+        block_rect.topleft = global_block_position
+
+        return block_rect
 
     @staticmethod
     def remove_block(chunk_pos, block_pos):
         ...
 
     @staticmethod
-    def get_global_block_position(block_position):
-        global_block_x = block_position[0] * BLOCK_SIZE
-        global_block_y = block_position[1] * BLOCK_SIZE
-
-        return (global_block_x, global_block_y)
-
-    @staticmethod
-    def display(screen, block_data):
+    def display(screen, block_data, camera_offset):
         for block_position, block_type in block_data.items():
-            global_block_position = BlockManager.get_global_block_position(
-                block_position)
-
             if block_type.value >= 0:
-                block_texture = BlockManager.get_block_texture(block_type)
-                screen.blit(block_texture, global_block_position)
+                block_texture, block_rect = BlockManager.create_block(
+                    block_position, block_type)
+
+                screen.blit(block_texture, (block_rect.x -
+                            camera_offset.x, block_rect.y - camera_offset.y))

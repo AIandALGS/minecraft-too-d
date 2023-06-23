@@ -4,23 +4,29 @@ import pygame
 from manager.chunk_manager import ChunkManager
 
 from src.entities.player import Player
+from src.cameras.camera import Camera
 
 from random import randint
 
 
 class World:
 
-    def __init__(self):
-        self.__seed = randint(0, sys.maxsize)
+    seed = randint(0, sys.maxsize)
 
-        self.__player = Player()
+    def __init__(self, player: Player, camera: Camera):
+        self.__player = player
+        self.__camera = camera
 
-        self.__chunk_manager = ChunkManager(self.__seed)
+        self.__chunk_manager = ChunkManager(World.seed)
 
     def generate_world(self):
-        player_local_position = self.__player.get_player_local_position()
+        self.__chunk_manager.initialize_chunks()
 
-        self.__chunk_manager.initialize_chunks((0, 0))
+    def update(self):
+        self.__player.update()
 
     def display(self, screen):
-        self.__chunk_manager.display(screen)
+        camera_offset = self.__camera.scroll()
+
+        self.__player.display(screen, camera_offset)
+        self.__chunk_manager.display(screen, camera_offset)

@@ -1,11 +1,12 @@
 from manager.block_manager import BlockManager
 
-from typing import Tuple
-
 from src.terrain.noise import PerlinNoise
 from src.block.block_type import BlockType
 
+from src.utils.vector import Position
 from src.utils.rounding import round_to_nearest_multiple
+
+from typing import Tuple
 
 from src.constants import (
     BLOCK_SIZE,
@@ -110,7 +111,7 @@ class ChunkManager:
     def unload_chunk(self):
         ...
 
-    def display(self, screen):
+    def display(self, screen, camera_offset: Position):
         for chunk_position in self.__loaded_chunks:
             block_data = self.__chunk_data[chunk_position]
-            BlockManager.display(screen, block_data)
+            BlockManager.display(screen, block_data, camera_offset)

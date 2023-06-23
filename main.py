@@ -4,6 +4,9 @@ import pygame
 
 from manager.event_manager import EventManager
 
+from src.entities.player import Player
+from src.cameras.camera import Camera
+
 from src.scene.world import World
 
 
@@ -14,6 +17,8 @@ def main(event_manager: EventManager, screen: pygame.Surface, clock: pygame.time
         screen.fill(BLACK)
 
         game_running = event_manager.poll_events()
+
+        world.update()
         world.display(screen)
 
         pygame.display.update()
@@ -25,7 +30,8 @@ if __name__ == "__main__":
         WINDOW_DISPLAY_WIDTH,
         WINDOW_DISPLAY_HEIGHT,
         BLACK,
-        FRAME_RATE)
+        FRAME_RATE
+    )
 
     pygame.init()
 
@@ -34,7 +40,10 @@ if __name__ == "__main__":
 
     event_manager = EventManager()
 
-    world = World()
+    player = Player()
+    camera = Camera(player)
+
+    world = World(player, camera)
     world.generate_world()
 
     main(event_manager, screen, pygame.time.Clock())
