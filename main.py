@@ -44,7 +44,6 @@ if __name__ == "__main__":
     camera = Camera(player)
 
     world = World(player, camera)
-    world.generate_world()
 
     main(event_manager, screen, pygame.time.Clock())
 

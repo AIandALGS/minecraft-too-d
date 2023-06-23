@@ -40,9 +40,6 @@ class BlockManager:
         return self.__rects
 
     def update(self, block_data):
-        self.__rects.clear()
-        self.__txtrs.clear()
-
         for block_position, block_type in block_data.items():
 
             if block_type != BlockType.AIR:
@@ -52,8 +49,6 @@ class BlockManager:
 
                 self.__rects.append(block_rect)
                 self.__txtrs.append(block_txtr)
-
-        print(len(self.__rects), len(self.__txtrs))
 
     @staticmethod
     def remove_block(chunk_pos, block_pos):
@@ -66,3 +61,6 @@ class BlockManager:
             offset_y = block_rect.y - camera_offset.y
 
             screen.blit(block_txtr, (offset_x, offset_y))
+
+        self.__rects.clear()
+        self.__txtrs.clear()

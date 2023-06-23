@@ -1,6 +1,7 @@
 import sys
 import pygame
 
+from manager.block_manager import BlockManager
 from manager.chunk_manager import ChunkManager
 
 from src.entities.player import Player
@@ -16,15 +17,25 @@ class World:
         self.__player = player
         self.__camera = camera
 
-        self.__chunk_manager = ChunkManager(World.seed)
-
-    def generate_world(self):
-        self.__chunk_manager.initialize_chunks()
+        self.__block_manager = BlockManager()
+        self.__chunk_manager = ChunkManager(self.__block_manager, World.seed)
 
     def update(self):
-        self.__player.update()
+        player_local_position = self.__player.get_local_position()
+        block_rects = self.__block_manager.get_block_rect_list()
 
-    def display(self, screen):
+        self.__chunk_manager.update(player_local_position)
+        self.__player.update(block_rects)
+
+    def display(self, screen: pygame.Surface) -> None:
+        """
+        Display all world objects, some examples include the player,
+        game objects like grass blocks, dirt blocks, stone blocks, etc..,
+
+        Keywords:
+        screen
+        """
+
         camera_offset = self.__camera.scroll()
 
         self.__player.display(screen, camera_offset)
