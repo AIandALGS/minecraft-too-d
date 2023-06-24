@@ -3,8 +3,7 @@ from enum import IntEnum
 
 class BlockType(IntEnum):
     """
-    Create an enumeration type structure to store the paths
-    to all block types.
+    Create an enumeration type structure to store the type of each block with a representative integer value.
     """
 
     AIR: int = -1
@@ -12,3 +11,5 @@ class BlockType(IntEnum):
     GRASS: int = 1
     DIRT: int = 2
     STONE: int = 3
+    OAK_LOG: int = 4
+    OAK_LEAVES: int = 5

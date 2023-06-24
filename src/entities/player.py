@@ -20,7 +20,7 @@ class Player(pygame.sprite.Sprite):
         self.__sprites = dict()
 
         self.__velocity = Position(0, 0)
-        self.__position = Position(0, -64)
+        self.__position = Position(0, 0)
 
         self.__current_collisions = []
 
@@ -58,9 +58,8 @@ class Player(pygame.sprite.Sprite):
         self.__rect.y += PLAYER_Y_OFFSET
         self.__rect.y -= PLAYER_Y_OFFSET
 
-        if len(self.__current_collisions) > 0:
+        if len(self.__current_collisions) > 0 and self.__velocity.y == 0:
             self.__velocity.y = -8
-            self.__current_collisions.clear()
 
     def update_player_x(self, block_rects):
         self.__rect.x += self.__velocity.x
@@ -82,11 +81,11 @@ class Player(pygame.sprite.Sprite):
             if self.__rect.colliderect(block_rect):
                 if self.__velocity.y > 0:
                     self.__rect.bottom = block_rect.top
+                    self.__current_collisions.append(block_rect)
 
                 elif self.__velocity.y < 0:
                     self.__rect.top = block_rect.bottom
 
-                self.__current_collisions.append(block_rect)
                 self.__velocity.y = 0
 
     def update_player_position(self, block_rects):
