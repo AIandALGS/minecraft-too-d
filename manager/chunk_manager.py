@@ -52,8 +52,12 @@ class ChunkManager:
             self.insert_block(
                 chunk_position, grass_block_position, BlockType.GRASS)
 
-            for dirt_y in range(DIRT_HEIGHT):
-                ...
+            for dirt_height in range(DIRT_HEIGHT):
+                dirt_y = dirt_height + grass_y + 1
+                dirt_block_position = (block_x, dirt_y)
+
+                self.insert_block(
+                    chunk_position, dirt_block_position, BlockType.DIRT)
 
     def insert_block(self, chunk_position, block_position, block_type):
         chunk_x = chunk_position[0]
