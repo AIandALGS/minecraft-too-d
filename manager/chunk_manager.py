@@ -6,9 +6,13 @@ from src.block.block_type import BlockType
 from src.utils.vector import Position
 from src.utils.rounding import round_to_nearest_multiple
 
-from typing import Tuple
+from typing import List, Tuple
 
-from src.constants import BLOCK_SIZE, CHUNK_SIZE
+from src.constants import (
+    BLOCK_SIZE,
+    CHUNK_SIZE,
+    DIRT_HEIGHT
+)
 
 
 class ChunkManager:
@@ -19,24 +23,6 @@ class ChunkManager:
         self.__loaded_chunks = []
 
         self.__perlin_noise = PerlinNoise(seed)
-
-    def initialize_chunks(self, chunk_position: Tuple[int, int] = (0, 0)) -> None:
-        """
-        Initializes the starting chunks upon world generation.
-
-        Keywords:
-        chunk_position - the starting chunk position by default will be at
-        (x, y) cooridnates, (0, 0).
-        """
-
-        for chunk_x in range(-CHUNK_SIZE, 2 * CHUNK_SIZE, CHUNK_SIZE):
-            for chunk_y in range(-CHUNK_SIZE, 2 * CHUNK_SIZE, CHUNK_SIZE):
-                chunk_position = (chunk_x, chunk_y)
-
-                self.generate_empty_chunk(chunk_position)
-                self.generate_chunk(chunk_position)
-
-                self.__loaded_chunks.append(chunk_position)
 
     def generate_empty_chunk(self, chunk_position: Tuple[int, int]) -> None:
         """
@@ -49,8 +35,8 @@ class ChunkManager:
         chunk_x = chunk_position[0]
         chunk_y = chunk_position[1]
 
-        for block_x in range(chunk_x, CHUNK_SIZE + chunk_x):
-            for block_y in range(chunk_y, CHUNK_SIZE + chunk_y):
+        for block_x in range(chunk_x, chunk_x + CHUNK_SIZE):
+            for block_y in range(chunk_y, chunk_y + CHUNK_SIZE):
                 block_position = (block_x, block_y)
                 block_data[block_position] = BlockType.AIR
 
@@ -58,52 +44,53 @@ class ChunkManager:
 
     def generate_chunk(self, chunk_position: Tuple[int, int]) -> None:
         chunk_x = chunk_position[0]
-        chunk_y = chunk_position[1]
 
         for block_x in range(chunk_x, CHUNK_SIZE + abs(chunk_x)):
-            block_y = self.__perlin_noise(block_x)
-            block_position = (block_x, block_y)
+            grass_y = self.__perlin_noise(block_x)
+            grass_block_position = (block_x, grass_y)
 
-            self.insert_block(chunk_position, block_position, BlockType.GRASS)
+            self.insert_block(
+                chunk_position, grass_block_position, BlockType.GRASS)
+
+            for dirt_y in range(DIRT_HEIGHT):
+                ...
 
     def insert_block(self, chunk_position, block_position, block_type):
-        chunk_x, chunk_y = chunk_position
-        block_x, block_y = block_position
+        chunk_x = chunk_position[0]
+        chunk_y = chunk_position[1]
 
-        if block_y >= chunk_y + CHUNK_SIZE or block_y < chunk_y:
-            new_chunk_x = chunk_x
-            new_chunk_y = round_to_nearest_multiple(block_y, CHUNK_SIZE)
+        if block_position not in self.__chunk_data[chunk_position]:
+            new_chunk_x = round_to_nearest_multiple(chunk_x, CHUNK_SIZE)
+            new_chunk_y = round_to_nearest_multiple(chunk_y, CHUNK_SIZE)
 
             new_chunk_position = (new_chunk_x, new_chunk_y)
 
             if new_chunk_position not in self.__chunk_data:
                 self.generate_empty_chunk(new_chunk_position)
-
-            self.set_block(new_chunk_position, block_position, block_type)
-
+                self.__chunk_data[new_chunk_position].update(
+                    {block_position: block_type})
         else:
-            self.set_block(chunk_position, block_position, block_type)
+            self.__chunk_data[chunk_position].update(
+                {block_position: block_type})
 
-    def set_block(self, chunk_position, block_position, block_type):
-        self.__chunk_data[chunk_position].update({block_position: block_type})
-
-    def load_chunks(self, player_local_position: Tuple[int, int]) -> None:
+    def load_chunks(self, player_local_position: Position) -> List[Tuple[int, int]]:
         """
         Loads the current chunks based on the player's local x and
         y coordinate values.
 
         Keywords:
-        player_x - the player's local x coordinate value.
-        player_y - the player's local y coordinate value.
+        player_local_position - the player's local position.
         """
 
         loaded_chunks = []
 
-        local_chunk_x = int(round(player_local_position.x, CHUNK_SIZE))
-        local_chunk_y = int(round(player_local_position.y, CHUNK_SIZE))
+        local_chunk_x = round_to_nearest_multiple(
+            player_local_position.x, CHUNK_SIZE)
+        local_chunk_y = round_to_nearest_multiple(
+            player_local_position.y, CHUNK_SIZE)
 
-        for chunk_x in range(local_chunk_x - CHUNK_SIZE, local_chunk_x + CHUNK_SIZE, CHUNK_SIZE):
-            for chunk_y in range(local_chunk_y - CHUNK_SIZE, local_chunk_y + CHUNK_SIZE, CHUNK_SIZE):
+        for chunk_x in range(local_chunk_x - CHUNK_SIZE, local_chunk_x + (2 * CHUNK_SIZE), CHUNK_SIZE):
+            for chunk_y in range(local_chunk_y - CHUNK_SIZE, local_chunk_y + (2 * CHUNK_SIZE), CHUNK_SIZE):
                 chunk_position = (chunk_x, chunk_y)
 
                 if chunk_position not in self.__chunk_data:
@@ -112,12 +99,7 @@ class ChunkManager:
 
                 loaded_chunks.append(chunk_position)
 
-        print(len(self.__loaded_chunks))
-
         return loaded_chunks
-
-    def unload_chunk(self):
-        ...
 
     def update(self, player_local_position: Tuple[int, int]) -> None:
         self.__loaded_chunks = self.load_chunks(player_local_position)
