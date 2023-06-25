@@ -10,6 +10,7 @@ from src.constants import (
     PLAYER_X_VELOCITY,
     PLAYER_Y_VELOCITY,
     PLAYER_Y_OFFSET,
+    PLAYER_JUMP_VELOCITY,
     PLAYER_GRAVITY,
     BLOCK_SIZE
 )
@@ -17,12 +18,10 @@ from src.constants import (
 
 class Player(pygame.sprite.Sprite):
     def __init__(self) -> None:
-        self.__sprites = dict()
+        # self.__sprites = dict()
 
         self.__velocity = Position(0, 0)
         self.__position = Position(0, 0)
-
-        self.__current_collisions = []
 
         self.__txtr = self.get_texture()
         self.__rect = self.__txtr.get_rect(topleft=self.__position)
@@ -58,8 +57,8 @@ class Player(pygame.sprite.Sprite):
         self.__rect.y += PLAYER_Y_OFFSET
         self.__rect.y -= PLAYER_Y_OFFSET
 
-        if len(self.__current_collisions) > 0 and self.__velocity.y == 0:
-            self.__velocity.y = -8
+        if self.__velocity.y == 0:
+            self.__velocity.y = -PLAYER_JUMP_VELOCITY
 
     def update_player_x(self, block_rects):
         self.__rect.x += self.__velocity.x
@@ -81,7 +80,6 @@ class Player(pygame.sprite.Sprite):
             if self.__rect.colliderect(block_rect):
                 if self.__velocity.y > 0:
                     self.__rect.bottom = block_rect.top
-                    self.__current_collisions.append(block_rect)
 
                 elif self.__velocity.y < 0:
                     self.__rect.top = block_rect.bottom

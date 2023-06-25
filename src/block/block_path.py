@@ -12,5 +12,6 @@ class BlockPath(StrEnum):
 
     GRASS: str = "data/textures/blocks/grass_block.png"
     DIRT: str = "data/textures/blocks/dirt_block.png"
+    STONE: str = "data/textures/blocks/stone_block.png"
     OAK_LOG: str = "data/textures/blocks/oak_log_block.png"
     OAK_LEAVES: str = "data/textures/blocks/oak_leaves_block.png"

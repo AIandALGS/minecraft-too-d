@@ -1,5 +1,7 @@
 import pygame
 
+from collections import defaultdict
+
 from src.block.block_type import BlockType
 from src.block.block_path import BlockPath
 
@@ -10,6 +12,8 @@ from src.constants import BLOCK_SIZE
 
 class BlockManager:
     def __init__(self):
+        self.__blocks = defaultdict(list)
+
         self.__rects = []
         self.__txtrs = []
 
@@ -19,7 +23,8 @@ class BlockManager:
 
         global_block_position = (global_block_x, global_block_y)
 
-        block_rect = pygame.Rect(*global_block_position, BLOCK_SIZE, BLOCK_SIZE)
+        block_rect = pygame.Rect(
+            *global_block_position, BLOCK_SIZE, BLOCK_SIZE)
 
         block_rect.topleft = global_block_position
 
@@ -28,8 +33,9 @@ class BlockManager:
     def get_block_txtr(self, block_type):
         block_path = BlockPath[block_type.name].value
 
-        block_imge = pygame.image.load(block_path).convert_alpha()
-        block_txtr = pygame.transform.scale(block_imge, (BLOCK_SIZE, BLOCK_SIZE))
+        block_imge = pygame.image.load(block_path).convert()
+        block_txtr = pygame.transform.scale(
+            block_imge, (BLOCK_SIZE, BLOCK_SIZE))
 
         return block_txtr
 
@@ -38,18 +44,22 @@ class BlockManager:
 
     def update(self, block_data):
         for block_position, block_type in block_data.items():
-            if block_type != BlockType.AIR:
-                block_rect = self.get_block_rect(block_position)
-                block_txtr = self.get_block_txtr(block_type)
+            if block_position not in self.__blocks.keys():
+                if block_type != BlockType.AIR:
+                    block_rect = self.get_block_rect(block_position)
+                    block_txtr = self.get_block_txtr(block_type)
 
-                self.__rects.append(block_rect)
-                self.__txtrs.append(block_txtr)
+                    self.__blocks[block_position] = [block_txtr, block_rect]
+            else:
+                self.__txtrs.append(self.__blocks[block_position][0])
+                self.__rects.append(self.__blocks[block_position][1])
 
     @staticmethod
     def remove_block(chunk_pos, block_pos):
         ...
 
     def display(self, screen, camera_offset):
+
         for block_rect, block_txtr in zip(self.__rects, self.__txtrs):
             offset_x = block_rect.x - camera_offset.x
             offset_y = block_rect.y - camera_offset.y
