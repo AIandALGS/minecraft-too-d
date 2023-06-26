@@ -2,7 +2,7 @@ import pygame
 
 from src.utils.vector import Position
 
-from typing import List, Tuple
+from typing import List
 
 from src.constants import (
     PLAYER_WIDTH,
@@ -66,8 +66,6 @@ class Player(pygame.sprite.Sprite):
 
     def get_local_position(self) -> Position:
         """
-        Calculate the local position vector for the global player position.
-
         Return the player's local position vector.
         """
 
@@ -89,7 +87,7 @@ class Player(pygame.sprite.Sprite):
 
     def jump(self) -> None:
         """
-        Calculate the player's jump velocity 
+        Calculate the player's jump velocity.
         """
 
         self.__rect.y += PLAYER_Y_OFFSET

@@ -5,13 +5,16 @@ from manager.event_manager import EventManager
 
 from src.entities.player import Player
 from src.cameras.camera import Camera
+from src.gui.mouse import Mouse
 
 from src.scene.world import World
 
 from pygame.locals import FULLSCREEN, DOUBLEBUF
 
 
-def main(event_manager: EventManager, screen: pygame.Surface, clock: pygame.time.Clock) -> None:
+def main(
+    event_manager: EventManager, screen: pygame.Surface, clock: pygame.time.Clock
+) -> None:
     """
     The main game loop. The game cease to run depending on the event handled by the event manager.
 
@@ -24,7 +27,7 @@ def main(event_manager: EventManager, screen: pygame.Surface, clock: pygame.time
     game_running = True
 
     while game_running:
-        screen.fill(BLACK)
+        screen.fill(BLUE)
 
         game_running = event_manager.poll_events()
 
@@ -38,26 +41,31 @@ def main(event_manager: EventManager, screen: pygame.Surface, clock: pygame.time
 if __name__ == "__main__":
     import cProfile
     import pstats
+    import os
 
     from src.constants import (
         WINDOW_DISPLAY_WIDTH,
         WINDOW_DISPLAY_HEIGHT,
-        BLACK,
-        FRAME_RATE
+        BLUE,
+        FRAME_RATE,
     )
+
+    os.environ["SDL_VIDEO_CENTERED"] = "1"
 
     pygame.init()
 
     flags = DOUBLEBUF
     screen = pygame.display.set_mode(
-        (WINDOW_DISPLAY_WIDTH, WINDOW_DISPLAY_HEIGHT), flags, 16)
+        (WINDOW_DISPLAY_WIDTH, WINDOW_DISPLAY_HEIGHT), flags, 16
+    )
 
     event_manager = EventManager()
 
     player = Player()
     camera = Camera(player)
+    mouse = Mouse()
 
-    world = World(player, camera)
+    world = World(player, camera, mouse)
 
     # Profiling
     with cProfile.Profile() as profile:
@@ -65,6 +73,6 @@ if __name__ == "__main__":
 
     stats = pstats.Stats(profile)
     stats.sort_stats(pstats.SortKey.TIME)
-    stats.dump_stats(filename='profiling.prof')
+    stats.dump_stats(filename="profiling.prof")
 
     pygame.quit()

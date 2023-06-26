@@ -22,7 +22,6 @@ class BlockManager:
 
     def __init__(self) -> None:
         self.__blocks = dict()
-
         self.__rects = []
         self.__txtrs = []
 
@@ -41,8 +40,7 @@ class BlockManager:
 
         global_block_position = (global_block_x, global_block_y)
 
-        block_rect = pygame.Rect(
-            *global_block_position, BLOCK_SIZE, BLOCK_SIZE)
+        block_rect = pygame.Rect(*global_block_position, BLOCK_SIZE, BLOCK_SIZE)
 
         block_rect.topleft = global_block_position
 
@@ -61,13 +59,12 @@ class BlockManager:
         block_path = BlockPath[block_type.name].value
 
         block_imge = pygame.image.load(block_path).convert()
-        block_txtr = pygame.transform.scale(
-            block_imge, (BLOCK_SIZE, BLOCK_SIZE))
+        block_txtr = pygame.transform.scale(block_imge, (BLOCK_SIZE, BLOCK_SIZE))
 
         return block_txtr
 
     def get_block_rect_list(self) -> List[pygame.Rect]:
-        """ 
+        """
         Get a list of all block hitboxes for the current loaded chunk position.
 
         Return all block hitboxes for the current loaded chunk positions.
@@ -80,11 +77,11 @@ class BlockManager:
         Update
 
         Keywords:
-        block_data - 
+        block_data -
         """
 
         for block_position, block_type in block_data.items():
-            if block_position not in self.__blocks.keys():
+            if block_position not in self.__blocks:
                 if block_type != BlockType.AIR:
                     block_rect = self.get_block_rect(block_position)
                     block_txtr = self.get_block_txtr(block_type)
