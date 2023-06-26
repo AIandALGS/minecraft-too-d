@@ -7,8 +7,6 @@ class EventManager:
     """
     The event manager class keeps tracks of all pygame events.
 
-    TODO: Add a priority queue for higher priority vectors.
-
     Attributes:
     __music_manager - a private variable defined to
     """
@@ -20,7 +18,7 @@ class EventManager:
         """
         Poll game events, i.e. check if the game is still running.
 
-        Return a Boolean values based on whether the game is running or
+        Return a Boolean value based on whether the game is running or
         not.
         """
 

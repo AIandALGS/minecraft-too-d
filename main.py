@@ -12,6 +12,15 @@ from pygame.locals import FULLSCREEN, DOUBLEBUF
 
 
 def main(event_manager: EventManager, screen: pygame.Surface, clock: pygame.time.Clock) -> None:
+    """
+    The main game loop. The game cease to run depending on the event handled by the event manager.
+
+    Keywords:
+    event_manager - the event manager manages all pygame events or world events.
+    screen - screen - the surface that our game objects will be displayed onto.
+    clock - the clock which defines the game's frame rate.
+    """
+
     game_running = True
 
     while game_running:
@@ -50,6 +59,7 @@ if __name__ == "__main__":
 
     world = World(player, camera)
 
+    # Profiling
     with cProfile.Profile() as profile:
         main(event_manager, screen, pygame.time.Clock())
 

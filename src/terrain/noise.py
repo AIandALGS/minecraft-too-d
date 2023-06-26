@@ -15,21 +15,24 @@ class PerlinNoise:
     Keywords:
     seed - the seed to be used for the Perlin noise generator.
 
+    Attributes:
+    p - a large permutation table.
+
     Function calls:
     set_permutation_table() - sets the permutation table.
     """
 
     p = [None] * 512
 
-    def __init__(self, seed=0) -> None:
+    def __init__(self, seed: int = 0) -> None:
         random.seed(seed)
-
         self.set_permutation_table()
 
-    def __call__(self, x, y=0, z=0) -> int:
+    def __call__(self, x: int, y: int = 0, z: int = 0) -> int:
         """
         Upon calling the PerlinNoise class, generate a noise value for the
-        passed x, y and z coordinate values.
+        passed x, y and z coordinate values. You can tweak the frequency, amplitude, and step settings for
+        different terrain generation.
 
         Return the generated noise value for the passed x, y ad z coordinate
         values.
@@ -64,7 +67,9 @@ class PerlinNoise:
         for j in range(256):
             p[256 + j] = p[j] = permutation_table[j]
 
-    def get_fade(self, t) -> float:
+        PerlinNoise.p = p
+
+    def get_fade(self, t: float) -> float:
         """
         A smooth step function, in this case, is cubic curve.
 
@@ -76,7 +81,7 @@ class PerlinNoise:
 
         return t**3 * (t * (t * 6 - 15) + 10)
 
-    def get_linear_interpolation(self, t, a, b) -> float:
+    def get_linear_interpolation(self, t: float, a: float, b: float) -> float:
         """
         Linear interpolation.
 
@@ -90,7 +95,7 @@ class PerlinNoise:
 
         return a + t * (b - a)
 
-    def get_gradient(self, hash, x, y=0, z=0) -> float:
+    def get_gradient(self, hash: int, x: int, y: int = 0, z: int = 0) -> float:
         """
         Convert the LO 4 bits of the hash code into 12 gradient directions.
 
@@ -98,6 +103,7 @@ class PerlinNoise:
         x, y and z coordinate values.
 
         Keywords:
+        hash - the passed hash code value.
         x - the passed x coordinate value.
         y - the passed y coordinate value, its default value is set to y = 0.
         z - the passed z coordinate value, its default value is set to z = 0.
@@ -110,7 +116,7 @@ class PerlinNoise:
 
         return (u if (h & 1) == 0 else -u) + (v if (h & 2) == 0 else -v)
 
-    def generate_noise(self, x, y=0, z=0) -> float:
+    def generate_noise(self, x: int, y: int = 0, z: int = 0) -> float:
         """
         Generate a noise value based on the passed x, y and z coordinate
         values.

@@ -1,3 +1,5 @@
+import pygame
+
 from manager.block_manager import BlockManager
 
 from src.terrain.noise import PerlinNoise
@@ -12,11 +14,12 @@ from src.constants import BLOCK_SIZE, CHUNK_SIZE, DIRT_HEIGHT, STONE_HEIGHT, TRE
 
 
 class ChunkManager:
+    """
+    """
+
     def __init__(self, block_manager, seed=0):
         self.__block_manager = block_manager
-
         self.__chunk_data = dict()
-
         self.__perlin_noise = PerlinNoise(seed)
 
     def generate_empty_chunk(self, chunk_position: Tuple[int, int]) -> None:
@@ -64,7 +67,7 @@ class ChunkManager:
                 self.insert_block(
                     chunk_position, stone_block_position, BlockType.STONE)
 
-    def insert_block(self, chunk_position, block_position, block_type) -> None:
+    def insert_block(self, chunk_position: Tuple[int, int], block_position: Tuple[int, int], block_type: BlockType) -> None:
         """
         Insert a block at the given chunk position and block position. If the block
         position does not exist at the given chunk position, create a new chunk for the
@@ -134,8 +137,9 @@ class ChunkManager:
 
     def load_chunks(self, player_local_position: Position) -> List[Tuple[int, int]]:
         """
-        Loads the current chunks based on the player's local x and
-        y coordinate values.
+        Loads the current chunks based on the player's local x and y coordinate values.
+
+        Return a list of the coordinates of all loaded chunks.
 
         Keywords:
         player_local_position - the player's local position.
@@ -167,12 +171,20 @@ class ChunkManager:
 
         return loaded_chunks
 
-    def update(self, player_local_position: Tuple[int, int]) -> None:
+    def update(self, player_local_position: Position) -> None:
+        # TODO write python docs
+
         loaded_chunks = self.load_chunks(player_local_position)
 
         for chunk_position in loaded_chunks:
             block_data = self.__chunk_data[chunk_position]
             self.__block_manager.update(block_data)
 
-    def display(self, screen, camera_offset: Position):
+    def display(self, screen: pygame.Surface, camera_offset: Position):
+        """
+        screen - the surface that our game objects will be displayed onto.
+        camera_offset - the camera offset ensures that the screen is automatically
+        centered upon every player movement.
+        """
+
         self.__block_manager.display(screen, camera_offset)
