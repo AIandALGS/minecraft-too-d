@@ -34,8 +34,10 @@ class World:
 
         player_local_position = self.__player.get_local_position()
         block_rects = self.__block_manager.get_block_rect_list()
+        camera_offset = self.__camera.scroll()
 
         self.__chunk_manager.update(player_local_position)
+        self.__chunk_manager.update_chunk(block_rects, camera_offset)
         self.__player.update(block_rects)
         self.__mouse.update(block_rects)
 

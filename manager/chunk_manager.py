@@ -1,6 +1,7 @@
 import pygame
 
 from manager.block_manager import BlockManager
+from src.gui.mouse import Mouse
 
 from src.terrain.noise import PerlinNoise
 from src.block.block_type import BlockType
@@ -172,6 +173,93 @@ class ChunkManager:
                 loaded_chunks.append(chunk_position)
 
         return loaded_chunks
+
+    def update_chunk(self, block_rects, camera_offset):
+        for block_rect in block_rects:
+            offset_block_position = BlockManager.get_offset_block_position(
+                block_rect, camera_offset
+            )
+
+            offset_block_rect = pygame.Rect(
+                *offset_block_position, BLOCK_SIZE, BLOCK_SIZE
+            )
+
+            offset_upper_block_rect = pygame.Rect(
+                offset_block_position[0],
+                offset_block_position[1] - BLOCK_SIZE,
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
+
+            offset_bottom_block_rect = pygame.Rect(
+                offset_block_position[0],
+                offset_block_position[1] + BLOCK_SIZE,
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
+
+            offset_left_block_rect = pygame.Rect(
+                offset_block_position[0] - BLOCK_SIZE,
+                offset_block_position[1],
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
+
+            offset_right_block_rect = pygame.Rect(
+                offset_block_position[0] + BLOCK_SIZE,
+                offset_block_position[1],
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
+
+            local_block_position = BlockManager.get_local_block_position(block_rect)
+
+            local_upper_block_position = BlockManager.get_local_block_position(
+                pygame.Rect(block_rect.x, block_rect.y - 1, BLOCK_SIZE, BLOCK_SIZE)
+            )
+
+            local_bottom_block_position = BlockManager.get_local_block_position(
+                pygame.Rect(block_rect.x, block_rect.y + 1, BLOCK_SIZE, BLOCK_SIZE)
+            )
+
+            local_left_block_position = BlockManager.get_local_block_position(
+                pygame.Rect(block_rect.x - 1, block_rect.y, BLOCK_SIZE, BLOCK_SIZE)
+            )
+
+            local_right_block_position = BlockManager.get_local_block_position(
+                pygame.Rect(block_rect.x + 1, block_rect.y, BLOCK_SIZE, BLOCK_SIZE)
+            )
+
+            chunk_position = tuple(
+                BlockManager.get_chunk_position(local_block_position)
+            )
+
+            if pygame.mouse.get_pressed()[0]:
+                if offset_block_rect.collidepoint(Mouse.get_position()):
+                    self.insert_block(
+                        chunk_position, local_block_position, BlockType.AIR
+                    )
+
+            elif pygame.mouse.get_pressed()[2]:
+                if offset_upper_block_rect.collidepoint(Mouse.get_position()):
+                    self.insert_block(
+                        chunk_position, local_upper_block_position, BlockType.GRASS
+                    )
+
+                elif offset_bottom_block_rect.collidepoint(Mouse.get_position()):
+                    self.insert_block(
+                        chunk_position, local_bottom_block_position, BlockType.GRASS
+                    )
+
+                elif offset_left_block_rect.collidepoint(Mouse.get_position()):
+                    self.insert_block(
+                        chunk_position, local_left_block_position, BlockType.GRASS
+                    )
+
+                elif offset_right_block_rect.collidepoint(Mouse.get_position()):
+                    self.insert_block(
+                        chunk_position, local_right_block_position, BlockType.GRASS
+                    )
 
     def update(self, player_local_position: Position) -> None:
         # TODO write python docs
