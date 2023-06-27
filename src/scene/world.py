@@ -32,14 +32,12 @@ class World:
         Update all world objects.
         """
 
-        camera_offset = self.__camera.scroll()
-
         player_local_position = self.__player.get_local_position()
         block_rects = self.__block_manager.get_block_rect_list()
 
         self.__chunk_manager.update(player_local_position)
         self.__player.update(block_rects)
-        self.__mouse.update(block_rects, camera_offset)
+        self.__mouse.update(block_rects)
 
     def display(self, screen: pygame.Surface) -> None:
         """
@@ -51,8 +49,7 @@ class World:
         """
 
         camera_offset = self.__camera.scroll()
-        block_rects = self.__block_manager.get_block_rect_list()
 
         self.__player.display(screen, camera_offset)
         self.__chunk_manager.display(screen, camera_offset)
-        self.__mouse.display(screen)
+        self.__mouse.display(screen, camera_offset)

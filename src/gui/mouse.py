@@ -12,11 +12,10 @@ class Mouse:
 
     def __init__(self):
         self.__hitbox = HitBox()
-
         self.__position = Position(0, 0)
-
         self.__txtr = self.get_mouse_txtr()
         self.__rect = self.__txtr.get_rect()
+        self.__block_rects = []
 
     def get_mouse_txtr(self):
         mouse_path = "data/textures/gui/crosshair.png"
@@ -27,14 +26,25 @@ class Mouse:
 
         return mouse_txtr
 
-    def update(self, block_rects, camera_offset):
+    def update(self, block_rects):
         self.__position.x = pygame.mouse.get_pos()[0]
         self.__position.y = pygame.mouse.get_pos()[1]
 
-        self.__hitbox.update(self.__position, block_rects, camera_offset)
-
         self.__rect.center = self.__position
 
-    def display(self, screen):
-        self.__hitbox.display(screen)
+        self.__block_rects = block_rects.copy()
+
+    def display(self, screen, camera_offset):
+        for block_rect in self.__block_rects:
+            global_block_x = block_rect.x - camera_offset.x
+            global_block_y = block_rect.y - camera_offset.y
+
+            global_block_position = Position(global_block_x, global_block_y)
+
+            global_block_rect = pygame.Rect(
+                *global_block_position, BLOCK_SIZE, BLOCK_SIZE)
+
+            if global_block_rect.collidepoint(self.__position):
+                self.__hitbox.add_hitbox(screen, global_block_rect)
+
         screen.blit(self.__txtr, self.__rect)
