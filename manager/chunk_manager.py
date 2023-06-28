@@ -57,19 +57,22 @@ class ChunkManager:
             grass_y = self.__perlin_noise(block_x)
             grass_block_position = (block_x, grass_y)
 
-            self.insert_block(chunk_position, grass_block_position, BlockType.GRASS)
+            self.insert_block(
+                chunk_position, grass_block_position, BlockType.GRASS)
 
             for dirt_height in range(DIRT_HEIGHT):
                 dirt_y = dirt_height + grass_y + 1
                 dirt_block_position = (block_x, dirt_y)
 
-                self.insert_block(chunk_position, dirt_block_position, BlockType.DIRT)
+                self.insert_block(
+                    chunk_position, dirt_block_position, BlockType.DIRT)
 
             for stone_height in range(STONE_HEIGHT):
                 stone_y = stone_height + grass_y + DIRT_HEIGHT + 1
                 stone_block_position = (block_x, stone_y)
 
-                self.insert_block(chunk_position, stone_block_position, BlockType.STONE)
+                self.insert_block(
+                    chunk_position, stone_block_position, BlockType.STONE)
 
     def insert_block(
         self,
@@ -88,22 +91,30 @@ class ChunkManager:
         block_type - the type of block we want to assign.
         """
 
-        chunk_x = chunk_position[0]
-        chunk_y = chunk_position[1]
+        actual_chunk_x = round_to_nearest_multiple(
+            block_position[0], CHUNK_SIZE)
+        actual_chunk_y = round_to_nearest_multiple(
+            block_position[1], CHUNK_SIZE)
 
-        if block_position not in self.__chunk_data[chunk_position]:
-            new_chunk_x = round_to_nearest_multiple(chunk_x, CHUNK_SIZE)
-            new_chunk_y = round_to_nearest_multiple(chunk_y, CHUNK_SIZE)
+        actual_chunk_position = (actual_chunk_x, actual_chunk_y)
 
-            new_chunk_position = (new_chunk_x, new_chunk_y)
+        if actual_chunk_position not in self.__chunk_data:
+            self.generate_empty_chunk(actual_chunk_position)
 
-            if new_chunk_position not in self.__chunk_data:
-                self.generate_empty_chunk(new_chunk_position)
-                self.__chunk_data[new_chunk_position].update(
+        if block_type != BlockType.AIR:
+
+            if self.__chunk_data[actual_chunk_position][block_position] == BlockType.AIR:
+                self.__chunk_data[actual_chunk_position].update(
                     {block_position: block_type}
                 )
+
+                self.__block_manager.add_block(block_position, block_type)
         else:
-            self.__chunk_data[chunk_position].update({block_position: block_type})
+            self.__chunk_data[actual_chunk_position].update(
+                {block_position: block_type}
+            )
+
+            self.__block_manager.remove_block(block_position)
 
     # def add_tree(self, chunk_position, grass_block_position) -> None:
     #     tree_x = grass_block_position[0]
@@ -155,14 +166,18 @@ class ChunkManager:
 
         loaded_chunks = []
 
-        local_chunk_x = round_to_nearest_multiple(player_local_position.x, CHUNK_SIZE)
-        local_chunk_y = round_to_nearest_multiple(player_local_position.y, CHUNK_SIZE)
+        local_chunk_x = round_to_nearest_multiple(
+            player_local_position.x, CHUNK_SIZE)
+        local_chunk_y = round_to_nearest_multiple(
+            player_local_position.y, CHUNK_SIZE)
 
         for chunk_x in range(
-            local_chunk_x - CHUNK_SIZE, local_chunk_x + (2 * CHUNK_SIZE), CHUNK_SIZE
+            local_chunk_x - CHUNK_SIZE, local_chunk_x +
+                (2 * CHUNK_SIZE), CHUNK_SIZE
         ):
             for chunk_y in range(
-                local_chunk_y - CHUNK_SIZE, local_chunk_y + (2 * CHUNK_SIZE), CHUNK_SIZE
+                local_chunk_y - CHUNK_SIZE, local_chunk_y +
+                    (2 * CHUNK_SIZE), CHUNK_SIZE
             ):
                 chunk_position = (chunk_x, chunk_y)
 
@@ -212,54 +227,86 @@ class ChunkManager:
                 BLOCK_SIZE,
             )
 
-            local_block_position = BlockManager.get_local_block_position(block_rect)
+            local_block_position = BlockManager.get_local_block_position(
+                block_rect)
 
             local_upper_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(block_rect.x, block_rect.y - 1, BLOCK_SIZE, BLOCK_SIZE)
+                pygame.Rect(block_rect.x, block_rect.y -
+                            BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
             )
 
             local_bottom_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(block_rect.x, block_rect.y + 1, BLOCK_SIZE, BLOCK_SIZE)
+                pygame.Rect(block_rect.x, block_rect.y +
+                            BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
             )
 
             local_left_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(block_rect.x - 1, block_rect.y, BLOCK_SIZE, BLOCK_SIZE)
+                pygame.Rect(block_rect.x - BLOCK_SIZE, block_rect.y,
+                            BLOCK_SIZE, BLOCK_SIZE)
             )
 
             local_right_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(block_rect.x + 1, block_rect.y, BLOCK_SIZE, BLOCK_SIZE)
-            )
-
-            chunk_position = tuple(
-                BlockManager.get_chunk_position(local_block_position)
+                pygame.Rect(block_rect.x + BLOCK_SIZE, block_rect.y,
+                            BLOCK_SIZE, BLOCK_SIZE)
             )
 
             if pygame.mouse.get_pressed()[0]:
                 if offset_block_rect.collidepoint(Mouse.get_position()):
+                    chunk_position = tuple(
+                        BlockManager.get_chunk_position(local_block_position)
+                    )
                     self.insert_block(
-                        chunk_position, local_block_position, BlockType.AIR
+                        chunk_position,
+                        local_block_position,
+                        BlockType.AIR,
                     )
 
             elif pygame.mouse.get_pressed()[2]:
                 if offset_upper_block_rect.collidepoint(Mouse.get_position()):
+                    chunk_position = tuple(
+                        BlockManager.get_chunk_position(
+                            local_upper_block_position)
+                    )
+
                     self.insert_block(
                         chunk_position, local_upper_block_position, BlockType.GRASS
                     )
+                    # self.__block_manager.add_block(
+                    #     local_upper_block_position, BlockType.GRASS)
 
                 elif offset_bottom_block_rect.collidepoint(Mouse.get_position()):
+                    chunk_position = tuple(
+                        BlockManager.get_chunk_position(
+                            local_bottom_block_position)
+                    )
                     self.insert_block(
                         chunk_position, local_bottom_block_position, BlockType.GRASS
                     )
+                    # self.__block_manager.add_block(
+                    #     local_bottom_block_position, BlockType.GRASS)
 
                 elif offset_left_block_rect.collidepoint(Mouse.get_position()):
+                    chunk_position = tuple(
+                        BlockManager.get_chunk_position(
+                            local_left_block_position)
+                    )
                     self.insert_block(
                         chunk_position, local_left_block_position, BlockType.GRASS
                     )
+                    # self.__block_manager.add_block(
+                    #     local_left_block_position, BlockType.GRASS)
 
                 elif offset_right_block_rect.collidepoint(Mouse.get_position()):
+                    chunk_position = tuple(
+                        BlockManager.get_chunk_position(
+                            local_right_block_position)
+                    )
                     self.insert_block(
                         chunk_position, local_right_block_position, BlockType.GRASS
                     )
+
+                    # self.__block_manager.add_block(
+                    #     local_right_block_position, BlockType.GRASS)
 
     def update(self, player_local_position: Position) -> None:
         # TODO write python docs

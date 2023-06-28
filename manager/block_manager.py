@@ -43,8 +43,10 @@ class BlockManager:
 
     @staticmethod
     def get_chunk_position(local_block_position):
-        chunk_x = round_to_nearest_multiple(local_block_position[0], CHUNK_SIZE)
-        chunk_y = round_to_nearest_multiple(local_block_position[1], CHUNK_SIZE)
+        chunk_x = round_to_nearest_multiple(
+            local_block_position[0], CHUNK_SIZE)
+        chunk_y = round_to_nearest_multiple(
+            local_block_position[1], CHUNK_SIZE)
 
         return (chunk_x, chunk_y)
 
@@ -63,7 +65,8 @@ class BlockManager:
 
         global_block_position = (global_block_x, global_block_y)
 
-        block_rect = pygame.Rect(*global_block_position, BLOCK_SIZE, BLOCK_SIZE)
+        block_rect = pygame.Rect(
+            *global_block_position, BLOCK_SIZE, BLOCK_SIZE)
 
         block_rect.topleft = global_block_position
 
@@ -82,7 +85,8 @@ class BlockManager:
         block_path = BlockPath[block_type.name].value
 
         block_imge = pygame.image.load(block_path).convert()
-        block_txtr = pygame.transform.scale(block_imge, (BLOCK_SIZE, BLOCK_SIZE))
+        block_txtr = pygame.transform.scale(
+            block_imge, (BLOCK_SIZE, BLOCK_SIZE))
 
         return block_txtr
 
@@ -94,6 +98,9 @@ class BlockManager:
         """
 
         return self.__rects
+
+    def remove_block(self, block_position):
+        del self.__blocks[block_position]
 
     def add_block(self, block_position, block_type):
         block_rect = self.get_block_rect(block_position)
@@ -111,11 +118,8 @@ class BlockManager:
 
         for block_position, block_type in block_data.items():
             if block_type != BlockType.AIR:
-                if block_position not in self.__blocks:
-                    self.add_block(block_position, block_type)
-                else:
-                    self.__txtrs.append(self.__blocks[block_position][0])
-                    self.__rects.append(self.__blocks[block_position][1])
+                self.__txtrs.append(self.__blocks[block_position][0])
+                self.__rects.append(self.__blocks[block_position][1])
 
     def display(self, screen: pygame.Surface, camera_offset: Position) -> None:
         """
