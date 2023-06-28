@@ -3,7 +3,7 @@ import pygame
 from manager.block_manager import BlockManager
 from src.gui.mouse import Mouse
 
-from src.terrain.noise import PerlinNoise
+from perlin import Perlin
 from src.block.block_type import BlockType
 
 from src.utils.vector import Position
@@ -27,7 +27,7 @@ class ChunkManager:
     def __init__(self, block_manager, seed=0):
         self.__block_manager = block_manager
         self.__chunk_data = dict()
-        self.__perlin_noise = PerlinNoise(seed)
+        self.__perlin_noise = Perlin(seed)
 
     def generate_empty_chunk(self, chunk_position: Tuple[int, int]) -> None:
         """
@@ -54,7 +54,7 @@ class ChunkManager:
         chunk_x = chunk_position[0]
 
         for block_x in range(chunk_x, CHUNK_SIZE + abs(chunk_x)):
-            grass_y = self.__perlin_noise(block_x)
+            grass_y = self.__perlin_noise.one(block_x)
             grass_block_position = (block_x, grass_y)
 
             self.insert_block(
@@ -79,6 +79,7 @@ class ChunkManager:
         chunk_position: Tuple[int, int],
         block_position: Tuple[int, int],
         block_type: BlockType,
+        add_block: bool = False
     ) -> None:
         """
         Insert a block at the given chunk position and block position. If the block
@@ -104,11 +105,11 @@ class ChunkManager:
         if block_type != BlockType.AIR:
 
             if self.__chunk_data[actual_chunk_position][block_position] == BlockType.AIR:
-                self.__chunk_data[actual_chunk_position].update(
-                    {block_position: block_type}
-                )
+                if block_position not in self.__block_manager.get_visited_block_positions() or add_block:
+                    self.__chunk_data[actual_chunk_position].update(
+                        {block_position: block_type}
+                    )
 
-                self.__block_manager.add_block(block_position, block_type)
         else:
             self.__chunk_data[actual_chunk_position].update(
                 {block_position: block_type}
@@ -259,6 +260,7 @@ class ChunkManager:
                         chunk_position,
                         local_block_position,
                         BlockType.AIR,
+                        True
                     )
 
             elif pygame.mouse.get_pressed()[2]:
@@ -269,7 +271,7 @@ class ChunkManager:
                     )
 
                     self.insert_block(
-                        chunk_position, local_upper_block_position, BlockType.GRASS
+                        chunk_position, local_upper_block_position, BlockType.GRASS, True
                     )
                     # self.__block_manager.add_block(
                     #     local_upper_block_position, BlockType.GRASS)
@@ -280,7 +282,7 @@ class ChunkManager:
                             local_bottom_block_position)
                     )
                     self.insert_block(
-                        chunk_position, local_bottom_block_position, BlockType.GRASS
+                        chunk_position, local_bottom_block_position, BlockType.GRASS, True
                     )
                     # self.__block_manager.add_block(
                     #     local_bottom_block_position, BlockType.GRASS)
@@ -291,7 +293,7 @@ class ChunkManager:
                             local_left_block_position)
                     )
                     self.insert_block(
-                        chunk_position, local_left_block_position, BlockType.GRASS
+                        chunk_position, local_left_block_position, BlockType.GRASS, True
                     )
                     # self.__block_manager.add_block(
                     #     local_left_block_position, BlockType.GRASS)
@@ -302,7 +304,7 @@ class ChunkManager:
                             local_right_block_position)
                     )
                     self.insert_block(
-                        chunk_position, local_right_block_position, BlockType.GRASS
+                        chunk_position, local_right_block_position, BlockType.GRASS, True
                     )
 
                     # self.__block_manager.add_block(

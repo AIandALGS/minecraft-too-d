@@ -1,4 +1,3 @@
-import sys
 import pygame
 import random
 
@@ -17,7 +16,7 @@ class World:
 
     """
 
-    seed = random.randint(0, sys.maxsize)
+    seed = random.randint(0, 999999)
 
     def __init__(self, player: Player, camera: Camera, mouse):
         self.__player = player

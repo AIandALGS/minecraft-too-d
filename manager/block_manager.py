@@ -26,6 +26,7 @@ class BlockManager:
         self.__blocks = dict()
         self.__rects = []
         self.__txtrs = []
+        self.__visited_block_positions = []
 
     @staticmethod
     def get_offset_block_position(block_rect, camera_offset):
@@ -99,10 +100,15 @@ class BlockManager:
 
         return self.__rects
 
+    def get_visited_block_positions(self):
+        return self.__visited_block_positions
+
     def remove_block(self, block_position):
         del self.__blocks[block_position]
 
     def add_block(self, block_position, block_type):
+        self.__visited_block_positions.append(block_position)
+
         block_rect = self.get_block_rect(block_position)
         block_txtr = self.get_block_txtr(block_type)
 
@@ -118,8 +124,11 @@ class BlockManager:
 
         for block_position, block_type in block_data.items():
             if block_type != BlockType.AIR:
-                self.__txtrs.append(self.__blocks[block_position][0])
-                self.__rects.append(self.__blocks[block_position][1])
+                if block_position not in self.__blocks:
+                    self.add_block(block_position, block_type)
+                else:
+                    self.__txtrs.append(self.__blocks[block_position][0])
+                    self.__rects.append(self.__blocks[block_position][1])
 
     def display(self, screen: pygame.Surface, camera_offset: Position) -> None:
         """
