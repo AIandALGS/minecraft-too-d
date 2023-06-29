@@ -34,6 +34,8 @@ class Player(pygame.sprite.Sprite):
         self.__position = Position(0, 0)
         self.__velocity = Position(0, 0)
 
+        self.__current_rects = []
+
         self.__txtr = self.get_texture()
         self.__rect = self.__txtr.get_rect(topleft=self.__position)
 
@@ -45,7 +47,8 @@ class Player(pygame.sprite.Sprite):
         player_path = "data/textures/entities/player/steve.png"
 
         player_imge = pygame.image.load(player_path).convert_alpha()
-        player_txtr = pygame.transform.scale(player_imge, (PLAYER_WIDTH, PLAYER_HEIGHT))
+        player_txtr = pygame.transform.scale(
+            player_imge, (PLAYER_WIDTH, PLAYER_HEIGHT))
 
         return player_txtr
 
@@ -92,8 +95,10 @@ class Player(pygame.sprite.Sprite):
         self.__rect.y += PLAYER_Y_OFFSET
         self.__rect.y -= PLAYER_Y_OFFSET
 
-        if self.__velocity.y == 0:
+        if len(self.__current_rects) > 0:
             self.__velocity.y = -PLAYER_JUMP_VELOCITY
+
+        self.__current_rects.clear()
 
     def update_player_x(self, block_rects: List[pygame.Rect]) -> None:
         """
@@ -129,6 +134,7 @@ class Player(pygame.sprite.Sprite):
             if self.__rect.colliderect(block_rect):
                 if self.__velocity.y > 0:
                     self.__rect.bottom = block_rect.top
+                    self.__current_rects.append(block_rect)
 
                 elif self.__velocity.y < 0:
                     self.__rect.top = block_rect.bottom

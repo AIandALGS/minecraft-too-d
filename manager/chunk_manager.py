@@ -188,8 +188,8 @@ class ChunkManager:
                 if chunk_position not in self.__chunk_data:
                     self.generate_empty_chunk(chunk_position)
                     self.generate_chunk(chunk_position)
-
-                loaded_chunks.append(chunk_position)
+                else:
+                    loaded_chunks.append(chunk_position)
 
         return loaded_chunks
 
