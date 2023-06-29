@@ -12,13 +12,13 @@ from src.constants import (
     PLAYER_Y_OFFSET,
     PLAYER_JUMP_VELOCITY,
     PLAYER_GRAVITY,
-    BLOCK_SIZE
+    BLOCK_SIZE,
 )
 
 
 class Player(pygame.sprite.Sprite):
     """
-    The Player class is a game object which the user can control. The player sprite is also known as 
+    The Player class is a game object which the user can control. The player sprite is also known as
     'Steve'.
 
     Attributes:
@@ -38,15 +38,14 @@ class Player(pygame.sprite.Sprite):
         self.__rect = self.__txtr.get_rect(topleft=self.__position)
 
     def get_texture(self) -> pygame.Surface:
-        """ #TODO create multiple player sprites for animations.
+        """#TODO create multiple player sprites for animations.
         Return the player's texture.
         """
 
         player_path = "data/textures/entities/player/steve.png"
 
         player_imge = pygame.image.load(player_path).convert_alpha()
-        player_txtr = pygame.transform.scale(
-            player_imge, (PLAYER_WIDTH, PLAYER_HEIGHT))
+        player_txtr = pygame.transform.scale(player_imge, (PLAYER_WIDTH, PLAYER_HEIGHT))
 
         return player_txtr
 
@@ -175,7 +174,7 @@ class Player(pygame.sprite.Sprite):
         self.update_player_position(block_rects)
 
     def display(self, screen: pygame.Surface, camera_offset: Position) -> None:
-        """ 
+        """
         Display the player.
 
         Keywords:

@@ -1,4 +1,5 @@
 import pygame
+import random
 
 from manager.block_manager import BlockManager
 from src.gui.mouse import Mouse
@@ -14,6 +15,7 @@ from typing import List, Tuple
 from src.constants import (
     BLOCK_SIZE,
     CHUNK_SIZE,
+    WATER_HEIGHT,
     DIRT_HEIGHT,
     STONE_HEIGHT,
     TREE_HEIGHT,
@@ -57,29 +59,35 @@ class ChunkManager:
             grass_y = self.__perlin_noise.one(block_x)
             grass_block_position = (block_x, grass_y)
 
-            self.insert_block(
-                chunk_position, grass_block_position, BlockType.GRASS)
+            self.insert_block(grass_block_position, BlockType.GRASS)
 
             for dirt_height in range(DIRT_HEIGHT):
                 dirt_y = dirt_height + grass_y + 1
                 dirt_block_position = (block_x, dirt_y)
 
-                self.insert_block(
-                    chunk_position, dirt_block_position, BlockType.DIRT)
+                self.insert_block(dirt_block_position, BlockType.DIRT)
 
             for stone_height in range(STONE_HEIGHT):
                 stone_y = stone_height + grass_y + DIRT_HEIGHT + 1
                 stone_block_position = (block_x, stone_y)
 
-                self.insert_block(
-                    chunk_position, stone_block_position, BlockType.STONE)
+                self.insert_block(stone_block_position, BlockType.STONE)
+
+            if grass_y > WATER_HEIGHT:
+                for water_height in range(grass_y - WATER_HEIGHT):
+                    water_y = grass_y - water_height - 1
+                    water_block_position = (block_x, water_y)
+
+                    self.insert_block(water_block_position, BlockType.WATER)
+            else:
+                if block_x % 10 == 0:
+                    self.add_tree(grass_block_position)
 
     def insert_block(
         self,
-        chunk_position: Tuple[int, int],
         block_position: Tuple[int, int],
         block_type: BlockType,
-        add_block: bool = False
+        add_block: bool = False,
     ) -> None:
         """
         Insert a block at the given chunk position and block position. If the block
@@ -92,20 +100,19 @@ class ChunkManager:
         block_type - the type of block we want to assign.
         """
 
-        actual_chunk_x = round_to_nearest_multiple(
-            block_position[0], CHUNK_SIZE)
-        actual_chunk_y = round_to_nearest_multiple(
-            block_position[1], CHUNK_SIZE)
-
-        actual_chunk_position = (actual_chunk_x, actual_chunk_y)
+        actual_chunk_position = BlockManager.get_chunk_position(block_position)
 
         if actual_chunk_position not in self.__chunk_data:
             self.generate_empty_chunk(actual_chunk_position)
 
         if block_type != BlockType.AIR:
-
-            if self.__chunk_data[actual_chunk_position][block_position] == BlockType.AIR:
-                if block_position not in self.__block_manager.get_visited_block_positions() or add_block:
+            if (
+                self.__chunk_data[actual_chunk_position][block_position]
+                == BlockType.AIR
+            ):
+                if (not self.__block_manager.get_visited_block_position(block_position)
+                    or add_block
+                    ):
                     self.__chunk_data[actual_chunk_position].update(
                         {block_position: block_type}
                     )
@@ -117,43 +124,39 @@ class ChunkManager:
 
             self.__block_manager.remove_block(block_position)
 
-    # def add_tree(self, chunk_position, grass_block_position) -> None:
-    #     tree_x = grass_block_position[0]
-    #     tree_y = grass_block_position[1]
+    def add_tree(self, grass_block_position) -> None:
+        tree_x = grass_block_position[0]
+        tree_y = grass_block_position[1]
 
-    #     for tree_height in range(TREE_HEIGHT):
-    #         log_x = tree_x
-    #         log_y = tree_y - tree_height - 1
-    #         log_block_position = (log_x, log_y)
+        for tree_height in range(TREE_HEIGHT):
+            log_x = tree_x
+            log_y = tree_y - tree_height - 1
+            log_block_position = (log_x, log_y)
 
-    #         self.insert_block(
-    #             chunk_position, log_block_position, BlockType.OAK_LOG)
+            self.insert_block(log_block_position, BlockType.OAK_LOG)
 
-    #     for leaves_width in (-2, -1, 0, 1, 2):
-    #         for leaves_height in (3, 4):
-    #             leaves_x = tree_x + leaves_width
-    #             leaves_y = tree_y - leaves_height
-    #             leaves_block_position = (leaves_x, leaves_y)
+        for leaves_width in (-2, -1, 0, 1, 2):
+            for leaves_height in (3, 4):
+                leaves_x = tree_x + leaves_width
+                leaves_y = tree_y - leaves_height
+                leaves_block_position = (leaves_x, leaves_y)
 
-    #             self.insert_block(
-    #                 chunk_position, leaves_block_position, BlockType.OAK_LEAVES)
+                self.insert_block(leaves_block_position, BlockType.OAK_LEAVES)
 
-    #     for leaves_width in (-1, 0, 1):
-    #         for leaves_height in (5, 6):
-    #             leaves_x = tree_x + leaves_width
-    #             leaves_y = tree_y - leaves_height
-    #             leaves_block_position = (leaves_x, leaves_y)
+        for leaves_width in (-1, 0, 1):
+            for leaves_height in (5, 6):
+                leaves_x = tree_x + leaves_width
+                leaves_y = tree_y - leaves_height
+                leaves_block_position = (leaves_x, leaves_y)
 
-    #             self.insert_block(
-    #                 chunk_position, leaves_block_position, BlockType.OAK_LEAVES)
+                self.insert_block(leaves_block_position, BlockType.OAK_LEAVES)
 
-    #     for leaves_width, leaves_height in ((0, 6), (-1, 5), (1, 5)):
-    #         leaves_x = tree_x + leaves_width
-    #         leaves_y = tree_y - leaves_height
-    #         leaves_block_position = (leaves_x, leaves_y)
+        for leaves_width, leaves_height in ((0, 6), (-1, 5), (1, 5)):
+            leaves_x = tree_x + leaves_width
+            leaves_y = tree_y - leaves_height
+            leaves_block_position = (leaves_x, leaves_y)
 
-    #         self.insert_block(
-    #             chunk_position, leaves_block_position, BlockType.OAK_LEAVES)
+            self.insert_block(leaves_block_position, BlockType.OAK_LEAVES)
 
     def load_chunks(self, player_local_position: Position) -> List[Tuple[int, int]]:
         """
@@ -232,83 +235,59 @@ class ChunkManager:
                 block_rect)
 
             local_upper_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(block_rect.x, block_rect.y -
-                            BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
+                pygame.Rect(
+                    block_rect.x, block_rect.y - BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE
+                )
             )
 
             local_bottom_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(block_rect.x, block_rect.y +
-                            BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
+                pygame.Rect(
+                    block_rect.x, block_rect.y + BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE
+                )
             )
 
             local_left_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(block_rect.x - BLOCK_SIZE, block_rect.y,
-                            BLOCK_SIZE, BLOCK_SIZE)
+                pygame.Rect(
+                    block_rect.x - BLOCK_SIZE, block_rect.y, BLOCK_SIZE, BLOCK_SIZE
+                )
             )
 
             local_right_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(block_rect.x + BLOCK_SIZE, block_rect.y,
-                            BLOCK_SIZE, BLOCK_SIZE)
+                pygame.Rect(
+                    block_rect.x + BLOCK_SIZE, block_rect.y, BLOCK_SIZE, BLOCK_SIZE
+                )
             )
 
             if pygame.mouse.get_pressed()[0]:
                 if offset_block_rect.collidepoint(Mouse.get_position()):
-                    chunk_position = tuple(
-                        BlockManager.get_chunk_position(local_block_position)
-                    )
-                    self.insert_block(
-                        chunk_position,
-                        local_block_position,
-                        BlockType.AIR,
-                        True
-                    )
+                    self.insert_block(local_block_position,
+                                      BlockType.AIR, True)
 
             elif pygame.mouse.get_pressed()[2]:
                 if offset_upper_block_rect.collidepoint(Mouse.get_position()):
-                    chunk_position = tuple(
-                        BlockManager.get_chunk_position(
-                            local_upper_block_position)
-                    )
-
                     self.insert_block(
-                        chunk_position, local_upper_block_position, BlockType.GRASS, True
+                        local_upper_block_position,
+                        BlockType.GRASS,
+                        True,
                     )
-                    # self.__block_manager.add_block(
-                    #     local_upper_block_position, BlockType.GRASS)
 
                 elif offset_bottom_block_rect.collidepoint(Mouse.get_position()):
-                    chunk_position = tuple(
-                        BlockManager.get_chunk_position(
-                            local_bottom_block_position)
-                    )
                     self.insert_block(
-                        chunk_position, local_bottom_block_position, BlockType.GRASS, True
+                        local_bottom_block_position,
+                        BlockType.GRASS,
+                        True,
                     )
-                    # self.__block_manager.add_block(
-                    #     local_bottom_block_position, BlockType.GRASS)
 
                 elif offset_left_block_rect.collidepoint(Mouse.get_position()):
-                    chunk_position = tuple(
-                        BlockManager.get_chunk_position(
-                            local_left_block_position)
-                    )
                     self.insert_block(
-                        chunk_position, local_left_block_position, BlockType.GRASS, True
-                    )
-                    # self.__block_manager.add_block(
-                    #     local_left_block_position, BlockType.GRASS)
+                        local_left_block_position, BlockType.GRASS, True)
 
                 elif offset_right_block_rect.collidepoint(Mouse.get_position()):
-                    chunk_position = tuple(
-                        BlockManager.get_chunk_position(
-                            local_right_block_position)
-                    )
                     self.insert_block(
-                        chunk_position, local_right_block_position, BlockType.GRASS, True
+                        local_right_block_position,
+                        BlockType.GRASS,
+                        True,
                     )
-
-                    # self.__block_manager.add_block(
-                    #     local_right_block_position, BlockType.GRASS)
 
     def update(self, player_local_position: Position) -> None:
         # TODO write python docs

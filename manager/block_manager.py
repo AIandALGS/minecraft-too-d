@@ -26,7 +26,7 @@ class BlockManager:
         self.__blocks = dict()
         self.__rects = []
         self.__txtrs = []
-        self.__visited_block_positions = []
+        self.__visited_block_positions = dict()
 
     @staticmethod
     def get_offset_block_position(block_rect, camera_offset):
@@ -85,7 +85,7 @@ class BlockManager:
 
         block_path = BlockPath[block_type.name].value
 
-        block_imge = pygame.image.load(block_path).convert()
+        block_imge = pygame.image.load(block_path).convert_alpha()
         block_txtr = pygame.transform.scale(
             block_imge, (BLOCK_SIZE, BLOCK_SIZE))
 
@@ -100,14 +100,17 @@ class BlockManager:
 
         return self.__rects
 
-    def get_visited_block_positions(self):
-        return self.__visited_block_positions
+    def get_visited_block_position(self, block_position):
+        try:
+            return self.__visited_block_positions[block_position]
+        except KeyError:
+            return False
 
     def remove_block(self, block_position):
         del self.__blocks[block_position]
 
     def add_block(self, block_position, block_type):
-        self.__visited_block_positions.append(block_position)
+        self.__visited_block_positions[block_position] = True
 
         block_rect = self.get_block_rect(block_position)
         block_txtr = self.get_block_txtr(block_type)

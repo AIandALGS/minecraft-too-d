@@ -1,15 +1,14 @@
 import pygame
+
 from manager.block_manager import BlockManager
 
 from src.gui.hitbox import HitBox
-
 from src.utils.vector import Position
 
 from src.constants import MOUSE_SIZE, BLOCK_SIZE
 
 
 class Mouse:
-
     hitbox_txtr = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE), pygame.SRCALPHA)
 
     def __init__(self):
@@ -27,8 +26,7 @@ class Mouse:
         mouse_path = "data/textures/gui/crosshair.png"
 
         mouse_imge = pygame.image.load(mouse_path).convert_alpha()
-        mouse_txtr = pygame.transform.scale(
-            mouse_imge, (MOUSE_SIZE, MOUSE_SIZE))
+        mouse_txtr = pygame.transform.scale(mouse_imge, (MOUSE_SIZE, MOUSE_SIZE))
 
         return mouse_txtr
 
@@ -43,22 +41,40 @@ class Mouse:
     def display(self, screen, camera_offset):
         for block_rect in self.__block_rects:
             offset_block_position = BlockManager.get_offset_block_position(
-                block_rect, camera_offset)
+                block_rect, camera_offset
+            )
 
             offset_block_rect = pygame.Rect(
-                *offset_block_position, BLOCK_SIZE, BLOCK_SIZE)
+                *offset_block_position, BLOCK_SIZE, BLOCK_SIZE
+            )
 
             offset_upper_block_rect = pygame.Rect(
-                offset_block_position[0], offset_block_position[1] - BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
+                offset_block_position[0],
+                offset_block_position[1] - BLOCK_SIZE,
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
 
             offset_bottom_block_rect = pygame.Rect(
-                offset_block_position[0], offset_block_position[1] + BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
+                offset_block_position[0],
+                offset_block_position[1] + BLOCK_SIZE,
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
 
             offset_left_block_rect = pygame.Rect(
-                offset_block_position[0] - BLOCK_SIZE, offset_block_position[1], BLOCK_SIZE, BLOCK_SIZE)
+                offset_block_position[0] - BLOCK_SIZE,
+                offset_block_position[1],
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
 
             offset_right__block_rect = pygame.Rect(
-                offset_block_position[0] + BLOCK_SIZE, offset_block_position[1], BLOCK_SIZE, BLOCK_SIZE)
+                offset_block_position[0] + BLOCK_SIZE,
+                offset_block_position[1],
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+            )
 
             if offset_block_rect.collidepoint(self.__position):
                 self.__hitbox.add_hitbox(screen, offset_block_rect)
