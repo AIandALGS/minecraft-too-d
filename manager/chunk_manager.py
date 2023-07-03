@@ -39,8 +39,8 @@ class ChunkManager:
         self.__perlin_noise = Perlin(seed)
 
     def generate_empty_chunk(self, chunk_position: Tuple[int, int]) -> None:
-        """
-        Generates an empty chunk when called. This function will mainly be called to preallocate memory for new chunk data.
+        """Generates an empty chunk when called. This function will mainly be
+        called to preallocate memory for new chunk data.
 
         Keywords:
         chunk_position - the passed chunk position value, determines where the empty chunk will be generated.
@@ -59,8 +59,8 @@ class ChunkManager:
         self.__chunk_data[chunk_position] = block_data
 
     def generate_chunk(self, chunk_position: Tuple[int, int]) -> None:
-        """
-        Procedurally generates a chunk based on the passed chunk position value.
+        """Procedurally generates a chunk based on the passed chunk position
+        value.
 
         Keywords:
         chunk_position - the passed chunk position value.
@@ -102,10 +102,10 @@ class ChunkManager:
         block_type: BlockType,
         add_block: bool = False,
     ) -> None:
-        """
-        Insert a block at the given chunk position and block position. If the block
-        position does not exist at the given chunk position, create a new chunk for the
-        specified block position and insert the block at the new chunk position.
+        """Insert a block at the given chunk position and block position. If
+        the block position does not exist at the given chunk position, create a
+        new chunk for the specified block position and insert the block at the
+        new chunk position.
 
         Keywords:
         chunk_position - the passed chunk position.
@@ -139,9 +139,8 @@ class ChunkManager:
             self.__block_manager.remove_block(block_position)
 
     def add_tree(self, grass_block_position) -> None:
-        """
-        Adds a tree at the given position. The position of the tree depends on the grass block's
-        position.
+        """Adds a tree at the given position. The position of the tree depends
+        on the grass block's position.
 
         Keywords:
         grass_block_position - the grass block's positional value.
@@ -181,8 +180,8 @@ class ChunkManager:
             self.insert_block(leaves_block_position, BlockType.OAK_LEAVES)
 
     def load_chunks(self, player_local_position: Position) -> List[Tuple[int, int]]:
-        """
-        Loads the current chunks based on the player's local x and y coordinate values.
+        """Loads the current chunks based on the player's local x and y
+        coordinate values.
 
         Return a list of the coordinates of all loaded chunks.
 
@@ -212,9 +211,9 @@ class ChunkManager:
         return loaded_chunks
 
     def update_chunk(self, block_rects, camera_offset) -> None:
-        """
-        Update the current chunk in current time. The player can right click to remove a block from the world.
-        Otherwise, a left click will allow the player to place a block at an appropriate position.
+        """Update the current chunk in current time. The player can right click
+        to remove a block from the world. Otherwise, a left click will allow
+        the player to place a block at an appropriate position.
 
         Keywords:
         block_rects - a list of all collidable blocks.
@@ -329,8 +328,8 @@ class ChunkManager:
                     )
 
     def update(self, player_local_position: Position) -> None:
-        """
-        Updates the world's chunks. Chunks will be loaded due to the player's local position.
+        """Updates the world's chunks. Chunks will be loaded due to the
+        player's local position.
 
         Keywords:
         player_local_position - the player's local Euclidean coordinates.
@@ -343,8 +342,7 @@ class ChunkManager:
             self.__block_manager.update(block_data)
 
     def display(self, screen: pygame.Surface, camera_offset: Position) -> None:
-        """
-        Display all blocks onto the screen within the loaded chunks.
+        """Display all blocks onto the screen within the loaded chunks.
 
         Keywords:
         screen - the surface that our game objects will be displayed onto.

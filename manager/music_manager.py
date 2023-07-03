@@ -5,8 +5,7 @@ from os import listdir
 
 
 class MusicManager:
-    """
-    The MusicManager class manages events related to music.
+    """The MusicManager class manages events related to music.
 
     Attributes:
     __music_path - a private variable which stores the path to our
@@ -24,9 +23,7 @@ class MusicManager:
         self.__music_poll = len(self.__music_list) - 1
 
     def play_music(self) -> None:
-        """
-        Plays a random music from the music directory.
-        """
+        """Plays a random music from the music directory."""
 
         music_rand = randint(0, self.__music_poll)
 

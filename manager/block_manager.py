@@ -11,9 +11,8 @@ from src.constants import BLOCK_SIZE, CHUNK_SIZE
 
 
 class BlockManager:
-    """
-    The BlockManager class automates block related processes with the help of essential
-    functions.
+    """The BlockManager class automates block related processes with the help
+    of essential functions.
 
     Attributes:
     __blocks - a dictionary that keeps a track on all block positions which have been rendered before.
@@ -32,8 +31,7 @@ class BlockManager:
 
     @staticmethod
     def get_offset_block_position(block_rect, camera_offset) -> Tuple[float, float]:
-        """
-        Return the offset block position.
+        """Return the offset block position.
 
         The offset block position is the actual block's position due to the camera's offset.
 
@@ -50,8 +48,7 @@ class BlockManager:
 
     @staticmethod
     def get_local_block_position(block_rect) -> Tuple[int, int]:
-        """
-        Return the local block position given the hitbox of the block.
+        """Return the local block position given the hitbox of the block.
 
         Keywords:
         block_rect - the hitbox values of the block.
@@ -64,8 +61,7 @@ class BlockManager:
 
     @staticmethod
     def get_chunk_position(block_position) -> Tuple[int, int]:
-        """
-        Return the chunk's position given the block's position.
+        """Return the chunk's position given the block's position.
 
         Keywords:
         block_position - the positional value of the block.
@@ -77,8 +73,7 @@ class BlockManager:
         return (chunk_x, chunk_y)
 
     def get_block_rect(self, block_position: Tuple[int, int]) -> pygame.Rect:
-        """
-        Create a block hitbox for the given block position.
+        """Create a block hitbox for the given block position.
 
         Return the block hitbox for the given block position.
 
@@ -98,8 +93,7 @@ class BlockManager:
         return block_rect
 
     def get_block_txtr(self, block_type: BlockType) -> pygame.Surface:
-        """
-        Create a block texture for the given block type.
+        """Create a block texture for the given block type.
 
         Return the block texture for the given block type.
 
@@ -115,23 +109,26 @@ class BlockManager:
         return block_txtr
 
     def get_block_rect_list(self) -> List[pygame.Rect]:
-        """
-        Get a list of all block hitboxes for the current loaded chunk position.
+        """Get a list of all block hitboxes for the current loaded chunk
+        position.
 
-        Return all block hitboxes for the current loaded chunk positions.
+        Return all block hitboxes for the current loaded chunk
+        positions.
         """
 
         return self.__collidables
 
     def get_visited_block_position(self, block_position) -> bool:
-        """
-        Return a Boolean value based on whether the queried block position has been visited already.
-
-        Using try-except statement, we can utilise the advantage of a dictionary and
-        make this operation O(1) instead of O(n).
+        """Return a Boolean value based on whether the queried block position
+        has been visited already. Using try-except statement, we can utilise
+        the advantage of a dictionary and make this operation O(1) instead of
+        O(n).
 
         Keywords:
         block_position - the positional value of the block.
+
+        Raises:
+        KeyError: raises an exception if the block_position is not found.
         """
 
         try:
@@ -140,16 +137,13 @@ class BlockManager:
             return False
 
     def remove_block(self, block_position) -> None:
-        """
-        Removes the block from the queired block position value.
-        """
+        """Removes the block from the queired block position value."""
 
         del self.__blocks[block_position]
 
     def add_block(self, block_position, block_type) -> None:
-        """
-        Adds a block to the 'to be displayed' blocks list and also updates the
-        dictionary of visited blocks.
+        """Adds a block to the 'to be displayed' blocks list and also updates
+        the dictionary of visited blocks.
 
         Keywords:
         block_position - the positional value of the block.
@@ -164,9 +158,9 @@ class BlockManager:
         self.__blocks[block_position] = [block_txtr, block_rect]
 
     def update(self, block_data: Dict[Tuple[int, int], BlockType]) -> None:
-        """
-        Updates the block manager and called essential block updating functions. Also
-        determines which blocks to be displayed onto the screen.
+        """Updates the block manager and called essential block updating
+        functions. Also determines which blocks to be displayed onto the
+        screen.
 
         Keywords:
         block_data - the block data for a speicific chunk.
@@ -184,8 +178,7 @@ class BlockManager:
                     self.__rects.append(self.__blocks[block_position][1])
 
     def display(self, screen: pygame.Surface, camera_offset: Position) -> None:
-        """
-        Display all block game objects to the screen.
+        """Display all block game objects to the screen.
 
         Keywords:
         screen - the surface that our game objects will be displayed onto.
