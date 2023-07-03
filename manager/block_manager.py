@@ -2,7 +2,6 @@ import pygame
 
 from src.block.block_type import BlockType
 from src.block.block_path import BlockPath
-
 from src.utils.vector import Position
 from src.utils.rounding import round_to_nearest_multiple
 

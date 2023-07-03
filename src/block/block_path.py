@@ -1,11 +1,7 @@
-import pygame
-
-from strenum import StrEnum
-
-from src.block.block_type import BlockType
+from enum import Enum
 
 
-class BlockPath(StrEnum):
+class BlockPath(Enum):
     """
     Create an enumeration type structure to store the paths to all block types.
     """

@@ -6,29 +6,41 @@ from manager.chunk_manager import ChunkManager
 
 from src.entities.player import Player
 from src.cameras.camera import Camera
+from src.gui.mouse import Mouse
 
 
 class World:
     """
-    The World class is called to st
+    The World class is called to generate a new world. The world is generated procedurally using
+    the Perlin noise algorithm.
+
+    Keywords:
+    player - the passed player instance.
+    camera - the passed camera instance.
+    mouse - the passed mouse instance.
 
     Attributes:
-
+    seed - the world's seed, the seed is randomly generated.
+    __player - a reference to the player instance.
+    __camera - a reference to the camera instance.
+    __mouse - a reference to the mouse instance.
+    __block_manager - a reference to the block manager instance.
+    __chunk_manager - a reference to the chunk manager instance.
     """
 
     seed = random.randint(0, 999999)
 
-    def __init__(self, player: Player, camera: Camera, mouse):
+    def __init__(self, player: Player, camera: Camera, mouse: Mouse):
         self.__player = player
         self.__camera = camera
         self.__mouse = mouse
-
         self.__block_manager = BlockManager()
         self.__chunk_manager = ChunkManager(self.__block_manager, World.seed)
 
     def update(self) -> None:
         """
-        Update all world objects.
+        Update all world objects. Keeping track of the player's local position, the list of all collidable blocks,
+        and the camera offset.
         """
 
         player_local_position = self.__player.get_local_position()

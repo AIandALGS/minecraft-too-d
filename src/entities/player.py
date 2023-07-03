@@ -37,7 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.__rect = self.__txtr.get_rect(topleft=self.__position)
 
     def get_texture(self) -> pygame.Surface:
-        """#TODO create multiple player sprites for animations.
+        """
         Return the player's texture.
         """
 

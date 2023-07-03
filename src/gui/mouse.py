@@ -15,15 +15,12 @@ class Mouse:
     The Mouse class is useful for storing information related to mouse events.
 
     Attributes:
-    hitbox_txtr - the hitbox's texture.
     __hitbox - an instance of the class hitBox.
     __position - the mouse's position.
     __txtr - the mouse's texture.
     __rect - the mouse hitbox.
     __block_rects - a copy of all block hitboxes within player loaded chunks.
     """
-
-    hitbox_txtr = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE), pygame.SRCALPHA)
 
     def __init__(self):
         self.__hitbox = HitBox()

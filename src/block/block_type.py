@@ -1,7 +1,7 @@
-from enum import IntEnum
+from enum import Enum
 
 
-class BlockType(IntEnum):
+class BlockType(Enum):
     """
     Create an enumeration type structure to store the type of each block with a representative integer value.
     """

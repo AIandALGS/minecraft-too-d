@@ -5,9 +5,10 @@ from manager.music_manager import MusicManager
 
 class EventManager:
     """
-    The event manager class keeps tracks of all pygame events.
+    The event manager class keeps tracks of all pygame events and events in general.
 
     Attributes:
+    __mouse_visible - keeps track of the whether the mouse is visible or not.
     __music_manager - a private variable defined to
     """
 
@@ -19,7 +20,7 @@ class EventManager:
         """
         Poll game events, i.e. check if the game is still running.
 
-        Return a Boolean value based on whether the game is running or not.
+        Return a Boolean value based on whether the game is still running or not.
         """
 
         game_running = True

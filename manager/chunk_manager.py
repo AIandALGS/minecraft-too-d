@@ -1,11 +1,11 @@
 import pygame
 
-from manager.block_manager import BlockManager
-from src.gui.mouse import Mouse
-
 from perlin import Perlin
-from src.block.block_type import BlockType
 
+from manager.block_manager import BlockManager
+
+from src.gui.mouse import Mouse
+from src.block.block_type import BlockType
 from src.utils.vector import Position
 from src.utils.rounding import round_to_nearest_multiple
 
@@ -22,7 +22,7 @@ from src.constants import (
 
 
 class ChunkManager:
-    """ 
+    """
     Keywords:
     block_manager - the block manager instance.
     seed - the world's seed value. Each seed generates a different world.
@@ -59,6 +59,13 @@ class ChunkManager:
         self.__chunk_data[chunk_position] = block_data
 
     def generate_chunk(self, chunk_position: Tuple[int, int]) -> None:
+        """
+        Procedurally generates a chunk based on the passed chunk position value.
+
+        Keywords:
+        chunk_position - the passed chunk position value.
+        """
+
         chunk_x = chunk_position[0]
 
         for block_x in range(chunk_x, CHUNK_SIZE + abs(chunk_x)):
@@ -117,8 +124,7 @@ class ChunkManager:
                 == BlockType.AIR
             ):
                 if (
-                    not self.__block_manager.get_visited_block_position(
-                        block_position)
+                    not self.__block_manager.get_visited_block_position(block_position)
                     or add_block
                 ):
                     self.__chunk_data[actual_chunk_position].update(
@@ -134,7 +140,7 @@ class ChunkManager:
 
     def add_tree(self, grass_block_position) -> None:
         """
-        Adds a tree at the given position. The position of the tree depends on the grass block's 
+        Adds a tree at the given position. The position of the tree depends on the grass block's
         position.
 
         Keywords:
@@ -186,18 +192,14 @@ class ChunkManager:
 
         loaded_chunks = []
 
-        local_chunk_x = round_to_nearest_multiple(
-            player_local_position.x, CHUNK_SIZE)
-        local_chunk_y = round_to_nearest_multiple(
-            player_local_position.y, CHUNK_SIZE)
+        local_chunk_x = round_to_nearest_multiple(player_local_position.x, CHUNK_SIZE)
+        local_chunk_y = round_to_nearest_multiple(player_local_position.y, CHUNK_SIZE)
 
         for chunk_x in range(
-            local_chunk_x - CHUNK_SIZE, local_chunk_x +
-                (2 * CHUNK_SIZE), CHUNK_SIZE
+            local_chunk_x - CHUNK_SIZE, local_chunk_x + (2 * CHUNK_SIZE), CHUNK_SIZE
         ):
             for chunk_y in range(
-                local_chunk_y - CHUNK_SIZE, local_chunk_y +
-                    (2 * CHUNK_SIZE), CHUNK_SIZE
+                local_chunk_y - CHUNK_SIZE, local_chunk_y + (2 * CHUNK_SIZE), CHUNK_SIZE
             ):
                 chunk_position = (chunk_x, chunk_y)
 
@@ -235,8 +237,7 @@ class ChunkManager:
                         block_rect
                     )
 
-                    self.insert_block(local_block_position,
-                                      BlockType.AIR, True)
+                    self.insert_block(local_block_position, BlockType.AIR, True)
 
             elif Mouse.get_left_click():
                 offset_upper_block_rect = pygame.Rect(
@@ -309,8 +310,7 @@ class ChunkManager:
                         )
                     )
 
-                    self.insert_block(
-                        local_left_block_position, BlockType.GRASS, True)
+                    self.insert_block(local_left_block_position, BlockType.GRASS, True)
 
                 elif offset_right_block_rect.collidepoint(Mouse.get_position()):
                     local_right_block_position = BlockManager.get_local_block_position(
@@ -330,7 +330,7 @@ class ChunkManager:
 
     def update(self, player_local_position: Position) -> None:
         """
-        Updates the world's chunks.
+        Updates the world's chunks. Chunks will be loaded due to the player's local position.
 
         Keywords:
         player_local_position - the player's local Euclidean coordinates.

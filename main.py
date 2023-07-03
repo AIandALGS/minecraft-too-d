@@ -6,7 +6,6 @@ from manager.event_manager import EventManager
 from src.entities.player import Player
 from src.cameras.camera import Camera
 from src.gui.mouse import Mouse
-
 from src.scene.world import World
 
 from pygame.locals import DOUBLEBUF
