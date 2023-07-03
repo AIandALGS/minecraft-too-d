@@ -4,9 +4,8 @@ from math import floor, ceil
 
 
 class PerlinNoise:
-    """
-    Perlin noise is a type of gradient noise developed by Ken Perlin in 1983.
-    In our case, we will be using Perlin noise to generate heightmaps for
+    """Perlin noise is a type of gradient noise developed by Ken Perlin in
+    1983. In our case, we will be using Perlin noise to generate heightmaps for
     one dimensional terrains, two dimensional terrains and three dimensional
     terrains.
 
@@ -29,10 +28,9 @@ class PerlinNoise:
         self.set_permutation_table()
 
     def __call__(self, x: int, y: int = 0, z: int = 0) -> int:
-        """
-        Upon calling the PerlinNoise class, generate a noise value for the
-        passed x, y and z coordinate values. You can tweak the frequency, amplitude, and step settings for
-        different terrain generation.
+        """Upon calling the PerlinNoise class, generate a noise value for the
+        passed x, y and z coordinate values. You can tweak the frequency,
+        amplitude, and step settings for different terrain generation.
 
         Return the generated noise value for the passed x, y ad z coordinate
         values.
@@ -55,9 +53,7 @@ class PerlinNoise:
         return ceil(amplitude * self.generate_noise(X, Y, Z))
 
     def set_permutation_table(self) -> None:
-        """
-        Set the permutation table.
-        """
+        """Set the permutation table."""
 
         p = PerlinNoise.p
 
@@ -70,8 +66,7 @@ class PerlinNoise:
         PerlinNoise.p = p
 
     def get_fade(self, t: float) -> float:
-        """
-        A smooth step function, in this case, is cubic curve.
+        """A smooth step function, in this case, is cubic curve.
 
         Return the value of f(t).
 
@@ -82,8 +77,7 @@ class PerlinNoise:
         return t**3 * (t * (t * 6 - 15) + 10)
 
     def get_linear_interpolation(self, t: float, a: float, b: float) -> float:
-        """
-        Linear interpolation.
+        """Linear interpolation.
 
         Return the interpolated value.
 
@@ -96,8 +90,7 @@ class PerlinNoise:
         return a + t * (b - a)
 
     def get_gradient(self, hash: int, x: int, y: int = 0, z: int = 0) -> float:
-        """
-        Convert the LO 4 bits of the hash code into 12 gradient directions.
+        """Convert the LO 4 bits of the hash code into 12 gradient directions.
 
         Return a unique gradient value for the given hash code and the passed
         x, y and z coordinate values.
@@ -117,8 +110,7 @@ class PerlinNoise:
         return (u if (h & 1) == 0 else -u) + (v if (h & 2) == 0 else -v)
 
     def generate_noise(self, x: int, y: int = 0, z: int = 0) -> float:
-        """
-        Generate a noise value based on the passed x, y and z coordinate
+        """Generate a noise value based on the passed x, y and z coordinate
         values.
 
         Return a noise value based on the passed x, y and z coordinate

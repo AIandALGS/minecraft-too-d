@@ -2,9 +2,8 @@ from enum import Enum
 
 
 class BlockPath(Enum):
-    """
-    Create an enumeration type structure to store the paths to all block types.
-    """
+    """Create an enumeration type structure to store the paths to all block
+    types."""
 
     WATER: str = "data/textures/blocks/water_block.png"
     GRASS: str = "data/textures/blocks/grass_block.png"

@@ -11,9 +11,8 @@ from src.constants import (
 
 
 class Camera:
-    """
-    A simple camera system that automatically tracks the player,
-    due to the player's current Euclidean (x, y) coordinates.
+    """A simple camera system that automatically tracks the player, due to the
+    player's current Euclidean (x, y) coordinates.
 
     Author: https://github.com/ChristianD37
 
@@ -41,9 +40,8 @@ class Camera:
         )
 
     def scroll(self) -> Position:
-        """
-        The scroll() function will be called in a main loop to update
-        the offset position vector.
+        """The scroll() function will be called in a main loop to update the
+        offset position vector.
 
         Return the offset position vector.
         """

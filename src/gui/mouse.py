@@ -11,8 +11,8 @@ from src.constants import MOUSE_SIZE, BLOCK_SIZE
 
 
 class Mouse:
-    """
-    The Mouse class is useful for storing information related to mouse events.
+    """The Mouse class is useful for storing information related to mouse
+    events.
 
     Attributes:
     __hitbox - an instance of the class hitBox.
@@ -31,32 +31,26 @@ class Mouse:
 
     @staticmethod
     def get_position() -> Tuple[int, int]:
-        """
-        Return the position of the mouse.
-        """
+        """Return the position of the mouse."""
 
         return pygame.mouse.get_pos()
 
     @staticmethod
     def get_right_click() -> bool:
-        """
-        Return the appropriate Boolean value depending on whether the player has right clicked.
-        """
+        """Return the appropriate Boolean value depending on whether the player
+        has right clicked."""
 
         return pygame.mouse.get_pressed()[0]
 
     @staticmethod
     def get_left_click() -> bool:
-        """
-        Return the appropriate Boolean value depending on whether the player has left clicked.
-        """
+        """Return the appropriate Boolean value depending on whether the player
+        has left clicked."""
 
         return pygame.mouse.get_pressed()[2]
 
     def get_mouse_txtr(self) -> None:
-        """
-        Create the mouse's texture.
-        """
+        """Create the mouse's texture."""
 
         mouse_path = "data/textures/gui/crosshair.png"
 
@@ -66,8 +60,7 @@ class Mouse:
         return mouse_txtr
 
     def update(self, block_rects) -> None:
-        """
-        Updates the mouse position and hitbox events.
+        """Updates the mouse position and hitbox events.
 
         Keywords:
         block_rects - the passes list value of block hitboxes.
@@ -79,8 +72,7 @@ class Mouse:
         self.__block_rects = block_rects.copy()
 
     def display(self, screen, camera_offset) -> None:
-        """
-        Draw's the mouse and hitbox sprites onto the display.
+        """Draw's the mouse and hitbox sprites onto the display.
 
         Keywords:
         screen - the surface that our game objects will be displayed onto.

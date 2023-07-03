@@ -2,9 +2,8 @@ from enum import Enum
 
 
 class BlockType(Enum):
-    """
-    Create an enumeration type structure to store the type of each block with a representative integer value.
-    """
+    """Create an enumeration type structure to store the type of each block
+    with a representative integer value."""
 
     AIR: int = -1
     WATER: int = 0

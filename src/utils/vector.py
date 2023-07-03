@@ -2,8 +2,8 @@ import pygame
 
 
 class Position(pygame.math.Vector2):
-    """
-    The Position class object is defined to store the two dimensional vector components.
+    """The Position class object is defined to store the two dimensional vector
+    components.
 
     Keywords:
     x - the passed x coordinate component.

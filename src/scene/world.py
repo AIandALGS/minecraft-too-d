@@ -10,9 +10,8 @@ from src.gui.mouse import Mouse
 
 
 class World:
-    """
-    The World class is called to generate a new world. The world is generated procedurally using
-    the Perlin noise algorithm.
+    """The World class is called to generate a new world. The world is
+    generated procedurally using the Perlin noise algorithm.
 
     Keywords:
     player - the passed player instance.
@@ -38,9 +37,10 @@ class World:
         self.__chunk_manager = ChunkManager(self.__block_manager, World.seed)
 
     def update(self) -> None:
-        """
-        Update all world objects. Keeping track of the player's local position, the list of all collidable blocks,
-        and the camera offset.
+        """Update all world objects.
+
+        Keeping track of the player's local position, the list of all
+        collidable blocks, and the camera offset.
         """
 
         player_local_position = self.__player.get_local_position()
@@ -53,8 +53,7 @@ class World:
         self.__mouse.update(block_rects)
 
     def display(self, screen: pygame.Surface) -> None:
-        """
-        Display all world game objects, some examples include the player,
+        """Display all world game objects, some examples include the player,
         game objects like grass blocks, dirt blocks, stone blocks, etc..,
 
         Keywords:
