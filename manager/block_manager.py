@@ -18,36 +18,62 @@ class BlockManager:
 
     Attributes:
     __blocks - a dictionary that keeps a track on all block positions which have been rendered before.
-    __rects - a list that stores the block hitboxes for the loaded chunks.
+    __rects - a list that stores all displayable block hitboxes for the loaded chunks.
     __txtrs - a list that stores the block textures for the loaded chunks.
+    __collidables - a list that stores all collidable block hitboxes for the loaded chunks.
+    __visited_block_positions - a dictionary that stores the
     """
 
     def __init__(self) -> None:
         self.__blocks = dict()
         self.__rects = []
         self.__txtrs = []
+        self.__collidables = []
         self.__visited_block_positions = dict()
 
     @staticmethod
-    def get_offset_block_position(block_rect, camera_offset):
+    def get_offset_block_position(block_rect, camera_offset) -> Tuple[float, float]:
+        """
+        Return the offset block position.
+
+        The offset block position is the actual block's position due to the camera's offset.
+
+        Kewords:
+        block_rect - the hitbox values of the block.
+        camera_offset - the camera offset ensures that the screen is automatically
+        centered upon every player movement.
+        """
+
         offset_block_x = block_rect.x - camera_offset.x
         offset_block_y = block_rect.y - camera_offset.y
 
         return (offset_block_x, offset_block_y)
 
     @staticmethod
-    def get_local_block_position(block_rect):
+    def get_local_block_position(block_rect) -> Tuple[int, int]:
+        """
+        Return the local block position given the hitbox of the block.
+
+        Keywords:
+        block_rect - the hitbox values of the block.
+        """
+
         local_block_x = block_rect.x // BLOCK_SIZE
         local_block_y = block_rect.y // BLOCK_SIZE
 
         return (local_block_x, local_block_y)
 
     @staticmethod
-    def get_chunk_position(local_block_position):
-        chunk_x = round_to_nearest_multiple(
-            local_block_position[0], CHUNK_SIZE)
-        chunk_y = round_to_nearest_multiple(
-            local_block_position[1], CHUNK_SIZE)
+    def get_chunk_position(block_position) -> Tuple[int, int]:
+        """
+        Return the chunk's position given the block's position.
+
+        Keywords:
+        block_position - the positional value of the block.
+        """
+
+        chunk_x = round_to_nearest_multiple(block_position[0], CHUNK_SIZE)
+        chunk_y = round_to_nearest_multiple(block_position[1], CHUNK_SIZE)
 
         return (chunk_x, chunk_y)
 
@@ -66,8 +92,7 @@ class BlockManager:
 
         global_block_position = (global_block_x, global_block_y)
 
-        block_rect = pygame.Rect(
-            *global_block_position, BLOCK_SIZE, BLOCK_SIZE)
+        block_rect = pygame.Rect(*global_block_position, BLOCK_SIZE, BLOCK_SIZE)
 
         block_rect.topleft = global_block_position
 
@@ -86,8 +111,7 @@ class BlockManager:
         block_path = BlockPath[block_type.name].value
 
         block_imge = pygame.image.load(block_path).convert_alpha()
-        block_txtr = pygame.transform.scale(
-            block_imge, (BLOCK_SIZE, BLOCK_SIZE))
+        block_txtr = pygame.transform.scale(block_imge, (BLOCK_SIZE, BLOCK_SIZE))
 
         return block_txtr
 
@@ -98,18 +122,41 @@ class BlockManager:
         Return all block hitboxes for the current loaded chunk positions.
         """
 
-        return self.__rects
+        return self.__collidables
 
-    def get_visited_block_position(self, block_position):
+    def get_visited_block_position(self, block_position) -> bool:
+        """
+        Return a Boolean value based on whether the queried block position has been visited already.
+
+        Using try-except statement, we can utilise the advantage of a dictionary and
+        make this operation O(1) instead of O(n).
+
+        Keywords:
+        block_position - the positional value of the block.
+        """
+
         try:
             return self.__visited_block_positions[block_position]
         except KeyError:
             return False
 
-    def remove_block(self, block_position):
+    def remove_block(self, block_position) -> None:
+        """
+        Removes the block from the queired block position value.
+        """
+
         del self.__blocks[block_position]
 
-    def add_block(self, block_position, block_type):
+    def add_block(self, block_position, block_type) -> None:
+        """
+        Adds a block to the 'to be displayed' blocks list and also updates the
+        dictionary of visited blocks.
+
+        Keywords:
+        block_position - the positional value of the block.
+        block_type - the type of block.
+        """
+
         self.__visited_block_positions[block_position] = True
 
         block_rect = self.get_block_rect(block_position)
@@ -119,10 +166,11 @@ class BlockManager:
 
     def update(self, block_data: Dict[Tuple[int, int], BlockType]) -> None:
         """
-        Update
+        Updates the block manager and called essential block updating functions. Also
+        determines which blocks to be displayed onto the screen.
 
         Keywords:
-        block_data -
+        block_data - the block data for a speicific chunk.
         """
 
         for block_position, block_type in block_data.items():
@@ -130,6 +178,9 @@ class BlockManager:
                 if block_position not in self.__blocks:
                     self.add_block(block_position, block_type)
                 else:
+                    if block_type != BlockType.WATER:
+                        self.__collidables.append(self.__blocks[block_position][1])
+
                     self.__txtrs.append(self.__blocks[block_position][0])
                     self.__rects.append(self.__blocks[block_position][1])
 
@@ -151,3 +202,4 @@ class BlockManager:
 
         self.__rects.clear()
         self.__txtrs.clear()
+        self.__collidables.clear()

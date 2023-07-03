@@ -9,7 +9,7 @@ from src.gui.mouse import Mouse
 
 from src.scene.world import World
 
-from pygame.locals import FULLSCREEN, DOUBLEBUF
+from pygame.locals import DOUBLEBUF
 
 
 def main(
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     world = World(player, camera, mouse)
 
-    # Profiling
+    # Profiling run snakeviz ./profiling.prof
     with cProfile.Profile() as profile:
         main(event_manager, screen, pygame.time.Clock())
 

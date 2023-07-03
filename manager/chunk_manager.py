@@ -1,5 +1,4 @@
 import pygame
-import random
 
 from manager.block_manager import BlockManager
 from src.gui.mouse import Mouse
@@ -19,12 +18,20 @@ from src.constants import (
     DIRT_HEIGHT,
     STONE_HEIGHT,
     TREE_HEIGHT,
-    TREE_CHANCE,
 )
 
 
 class ChunkManager:
-    """ """
+    """ 
+    Keywords:
+    block_manager - the block manager instance.
+    seed - the world's seed value. Each seed generates a different world.
+
+    Attributes:
+    __block_manager - a reference to the block manager instance.
+    __chunk_data - stores chunk data.
+    __perlin_noise - initiate the perlin noise module.
+    """
 
     def __init__(self, block_manager, seed=0):
         self.__block_manager = block_manager
@@ -36,8 +43,7 @@ class ChunkManager:
         Generates an empty chunk when called. This function will mainly be called to preallocate memory for new chunk data.
 
         Keywords:
-        chunk_position - the passed chunk position value, determines where the empty
-        chunk will be generated.
+        chunk_position - the passed chunk position value, determines where the empty chunk will be generated.
         """
 
         block_data = dict()
@@ -107,12 +113,14 @@ class ChunkManager:
 
         if block_type != BlockType.AIR:
             if (
-                self.__chunk_data[actual_chunk_position][block_position]
+                self.__chunk_data[actual_chunk_position].get(block_position)
                 == BlockType.AIR
             ):
-                if (not self.__block_manager.get_visited_block_position(block_position)
+                if (
+                    not self.__block_manager.get_visited_block_position(
+                        block_position)
                     or add_block
-                    ):
+                ):
                     self.__chunk_data[actual_chunk_position].update(
                         {block_position: block_type}
                     )
@@ -125,6 +133,14 @@ class ChunkManager:
             self.__block_manager.remove_block(block_position)
 
     def add_tree(self, grass_block_position) -> None:
+        """
+        Adds a tree at the given position. The position of the tree depends on the grass block's 
+        position.
+
+        Keywords:
+        grass_block_position - the grass block's positional value.
+        """
+
         tree_x = grass_block_position[0]
         tree_y = grass_block_position[1]
 
@@ -193,7 +209,17 @@ class ChunkManager:
 
         return loaded_chunks
 
-    def update_chunk(self, block_rects, camera_offset):
+    def update_chunk(self, block_rects, camera_offset) -> None:
+        """
+        Update the current chunk in current time. The player can right click to remove a block from the world.
+        Otherwise, a left click will allow the player to place a block at an appropriate position.
+
+        Keywords:
+        block_rects - a list of all collidable blocks.
+        camera_offset - the camera offset ensures that the screen is automatically
+        centered upon every player movement.
+        """
+
         for block_rect in block_rects:
             offset_block_position = BlockManager.get_offset_block_position(
                 block_rect, camera_offset
@@ -203,68 +229,54 @@ class ChunkManager:
                 *offset_block_position, BLOCK_SIZE, BLOCK_SIZE
             )
 
-            offset_upper_block_rect = pygame.Rect(
-                offset_block_position[0],
-                offset_block_position[1] - BLOCK_SIZE,
-                BLOCK_SIZE,
-                BLOCK_SIZE,
-            )
-
-            offset_bottom_block_rect = pygame.Rect(
-                offset_block_position[0],
-                offset_block_position[1] + BLOCK_SIZE,
-                BLOCK_SIZE,
-                BLOCK_SIZE,
-            )
-
-            offset_left_block_rect = pygame.Rect(
-                offset_block_position[0] - BLOCK_SIZE,
-                offset_block_position[1],
-                BLOCK_SIZE,
-                BLOCK_SIZE,
-            )
-
-            offset_right_block_rect = pygame.Rect(
-                offset_block_position[0] + BLOCK_SIZE,
-                offset_block_position[1],
-                BLOCK_SIZE,
-                BLOCK_SIZE,
-            )
-
-            local_block_position = BlockManager.get_local_block_position(
-                block_rect)
-
-            local_upper_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(
-                    block_rect.x, block_rect.y - BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE
-                )
-            )
-
-            local_bottom_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(
-                    block_rect.x, block_rect.y + BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE
-                )
-            )
-
-            local_left_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(
-                    block_rect.x - BLOCK_SIZE, block_rect.y, BLOCK_SIZE, BLOCK_SIZE
-                )
-            )
-
-            local_right_block_position = BlockManager.get_local_block_position(
-                pygame.Rect(
-                    block_rect.x + BLOCK_SIZE, block_rect.y, BLOCK_SIZE, BLOCK_SIZE
-                )
-            )
-
-            if pygame.mouse.get_pressed()[0]:
+            if Mouse.get_right_click():
                 if offset_block_rect.collidepoint(Mouse.get_position()):
+                    local_block_position = BlockManager.get_local_block_position(
+                        block_rect
+                    )
+
                     self.insert_block(local_block_position,
                                       BlockType.AIR, True)
 
-            elif pygame.mouse.get_pressed()[2]:
+            elif Mouse.get_left_click():
+                offset_upper_block_rect = pygame.Rect(
+                    offset_block_position[0],
+                    offset_block_position[1] - BLOCK_SIZE,
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                )
+
+                offset_bottom_block_rect = pygame.Rect(
+                    offset_block_position[0],
+                    offset_block_position[1] + BLOCK_SIZE,
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                )
+
+                offset_left_block_rect = pygame.Rect(
+                    offset_block_position[0] - BLOCK_SIZE,
+                    offset_block_position[1],
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                )
+
+                offset_right_block_rect = pygame.Rect(
+                    offset_block_position[0] + BLOCK_SIZE,
+                    offset_block_position[1],
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                )
+
                 if offset_upper_block_rect.collidepoint(Mouse.get_position()):
+                    local_upper_block_position = BlockManager.get_local_block_position(
+                        pygame.Rect(
+                            block_rect.x,
+                            block_rect.y - BLOCK_SIZE,
+                            BLOCK_SIZE,
+                            BLOCK_SIZE,
+                        )
+                    )
+
                     self.insert_block(
                         local_upper_block_position,
                         BlockType.GRASS,
@@ -272,6 +284,15 @@ class ChunkManager:
                     )
 
                 elif offset_bottom_block_rect.collidepoint(Mouse.get_position()):
+                    local_bottom_block_position = BlockManager.get_local_block_position(
+                        pygame.Rect(
+                            block_rect.x,
+                            block_rect.y + BLOCK_SIZE,
+                            BLOCK_SIZE,
+                            BLOCK_SIZE,
+                        )
+                    )
+
                     self.insert_block(
                         local_bottom_block_position,
                         BlockType.GRASS,
@@ -279,10 +300,28 @@ class ChunkManager:
                     )
 
                 elif offset_left_block_rect.collidepoint(Mouse.get_position()):
+                    local_left_block_position = BlockManager.get_local_block_position(
+                        pygame.Rect(
+                            block_rect.x - BLOCK_SIZE,
+                            block_rect.y,
+                            BLOCK_SIZE,
+                            BLOCK_SIZE,
+                        )
+                    )
+
                     self.insert_block(
                         local_left_block_position, BlockType.GRASS, True)
 
                 elif offset_right_block_rect.collidepoint(Mouse.get_position()):
+                    local_right_block_position = BlockManager.get_local_block_position(
+                        pygame.Rect(
+                            block_rect.x + BLOCK_SIZE,
+                            block_rect.y,
+                            BLOCK_SIZE,
+                            BLOCK_SIZE,
+                        )
+                    )
+
                     self.insert_block(
                         local_right_block_position,
                         BlockType.GRASS,
@@ -290,7 +329,12 @@ class ChunkManager:
                     )
 
     def update(self, player_local_position: Position) -> None:
-        # TODO write python docs
+        """
+        Updates the world's chunks.
+
+        Keywords:
+        player_local_position - the player's local Euclidean coordinates.
+        """
 
         loaded_chunks = self.load_chunks(player_local_position)
 
@@ -298,8 +342,11 @@ class ChunkManager:
             block_data = self.__chunk_data[chunk_position]
             self.__block_manager.update(block_data)
 
-    def display(self, screen: pygame.Surface, camera_offset: Position):
+    def display(self, screen: pygame.Surface, camera_offset: Position) -> None:
         """
+        Display all blocks onto the screen within the loaded chunks.
+
+        Keywords:
         screen - the surface that our game objects will be displayed onto.
         camera_offset - the camera offset ensures that the screen is automatically
         centered upon every player movement.

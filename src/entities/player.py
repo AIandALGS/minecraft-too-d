@@ -24,18 +24,15 @@ class Player(pygame.sprite.Sprite):
     Attributes:
     __position - a private instance of the player's position vector.
     __velocity - a private instance of the player's velocity vector.
+    __current_rects - a list of blocks which the player is currently in contact with.
     __txtr - a private instance of the player's texture.
     __rect - a provate instance of the player's hitbox.
     """
 
     def __init__(self) -> None:
-        # self.__sprites = dict()
-
         self.__position = Position(0, 0)
         self.__velocity = Position(0, 0)
-
         self.__current_rects = []
-
         self.__txtr = self.get_texture()
         self.__rect = self.__txtr.get_rect(topleft=self.__position)
 
@@ -47,8 +44,7 @@ class Player(pygame.sprite.Sprite):
         player_path = "data/textures/entities/player/steve.png"
 
         player_imge = pygame.image.load(player_path).convert_alpha()
-        player_txtr = pygame.transform.scale(
-            player_imge, (PLAYER_WIDTH, PLAYER_HEIGHT))
+        player_txtr = pygame.transform.scale(player_imge, (PLAYER_WIDTH, PLAYER_HEIGHT))
 
         return player_txtr
 
@@ -95,7 +91,7 @@ class Player(pygame.sprite.Sprite):
         self.__rect.y += PLAYER_Y_OFFSET
         self.__rect.y -= PLAYER_Y_OFFSET
 
-        if len(self.__current_rects) > 0:
+        if len(self.__current_rects) > 0 and self.__velocity.y == 0:
             self.__velocity.y = -PLAYER_JUMP_VELOCITY
 
         self.__current_rects.clear()
