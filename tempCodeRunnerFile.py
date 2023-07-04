@@ -1,20 +1,18 @@
-    os.environ["SDL_VIDEO_CENTERED"] = "1"
+from manager.event_manager import EventManager
 
-    pygame.init()
+from src.entities.player import Player
+from src.cameras.camera import Camera
+from src.gui.mouse import Mouse
+from src.scene.world import World
 
-    flags = DOUBLEBUF
-    screen = pygame.display.set_mode(
-        (WINDOW_DISPLAY_WIDTH, WINDOW_DISPLAY_HEIGHT), flags, 16
-    )
+from pygame.locals import DOUBLEBUF
 
-    event_manager = EventManager()
 
-    player = Player()
-    camera = Camera(player)
-    mouse = Mouse()
+def main(
+    event_manager: EventManager, screen: pygame.Surface, clock: pygame.time.Clock
+) -> None:
+    """
+    The main game loop. The game cease to run depending on the event handled by the event manager.
 
-    world = World(player, camera, mouse)
-
-    # Profiling
-    with cProfile.Profile() as profile:
-        main(event_manager, screen, pygame.time.Clock())
+    Keywords:
+    e

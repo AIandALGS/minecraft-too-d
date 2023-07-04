@@ -27,7 +27,7 @@ class BlockManager:
         self.__rects = []
         self.__txtrs = []
         self.__collidables = []
-        self.__visited_block_positions = dict()
+        self.__visited_block_positions = []
 
     @staticmethod
     def get_offset_block_position(block_rect, camera_offset) -> Tuple[float, float]:
@@ -86,7 +86,8 @@ class BlockManager:
 
         global_block_position = (global_block_x, global_block_y)
 
-        block_rect = pygame.Rect(*global_block_position, BLOCK_SIZE, BLOCK_SIZE)
+        block_rect = pygame.Rect(
+            *global_block_position, BLOCK_SIZE, BLOCK_SIZE)
 
         block_rect.topleft = global_block_position
 
@@ -104,7 +105,8 @@ class BlockManager:
         block_path = BlockPath[block_type.name].value
 
         block_imge = pygame.image.load(block_path).convert_alpha()
-        block_txtr = pygame.transform.scale(block_imge, (BLOCK_SIZE, BLOCK_SIZE))
+        block_txtr = pygame.transform.scale(
+            block_imge, (BLOCK_SIZE, BLOCK_SIZE))
 
         return block_txtr
 
@@ -120,21 +122,13 @@ class BlockManager:
 
     def get_visited_block_position(self, block_position) -> bool:
         """Return a Boolean value based on whether the queried block position
-        has been visited already. Using try-except statement, we can utilise
-        the advantage of a dictionary and make this operation O(1) instead of
-        O(n).
+        has been visited already.
 
         Keywords:
         block_position - the positional value of the block.
-
-        Raises:
-        KeyError: raises an exception if the block_position is not found.
         """
 
-        try:
-            return self.__visited_block_positions[block_position]
-        except KeyError:
-            return False
+        return block_position in self.__visited_block_positions
 
     def remove_block(self, block_position) -> None:
         """Removes the block from the queired block position value."""
@@ -150,7 +144,7 @@ class BlockManager:
         block_type - the type of block.
         """
 
-        self.__visited_block_positions[block_position] = True
+        self.__visited_block_positions.append(block_position)
 
         block_rect = self.get_block_rect(block_position)
         block_txtr = self.get_block_txtr(block_type)
@@ -167,15 +161,15 @@ class BlockManager:
         """
 
         for block_position, block_type in block_data.items():
-            if block_type != BlockType.AIR:
-                if block_position not in self.__blocks:
+            if block_position not in self.__blocks:
+                if block_type != BlockType.AIR:
                     self.add_block(block_position, block_type)
-                else:
-                    if block_type != BlockType.WATER:
-                        self.__collidables.append(self.__blocks[block_position][1])
+            else:
+                if block_type != BlockType.WATER:
+                    self.__collidables.append(self.__blocks[block_position][1])
 
-                    self.__txtrs.append(self.__blocks[block_position][0])
-                    self.__rects.append(self.__blocks[block_position][1])
+                self.__txtrs.append(self.__blocks[block_position][0])
+                self.__rects.append(self.__blocks[block_position][1])
 
     def display(self, screen: pygame.Surface, camera_offset: Position) -> None:
         """Display all block game objects to the screen.
