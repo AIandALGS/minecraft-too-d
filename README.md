@@ -33,3 +33,6 @@ Steps are provided below if you would like to contribute to the project:
 
 # Contact
 - Linkedin: https://www.linkedin.com/in/gallon-zhou-a3739b278/
+
+# Credit
+- [Block textures](https://mcasset.cloud/)
